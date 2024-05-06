@@ -1,0 +1,21 @@
+<form (ngSubmit)="createContainer()" class="create-container-form">
+  <mat-form-field class="full-width">
+    <mat-label>Content</mat-label>
+    <mat-select [(value)]="selectedContent">
+      <mat-option value="{{content.id}}"
+                  *ngFor="let content of availableContents$ | async">{{content.standard}} {{content.definition}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <span class="full-width">
+    <mat-checkbox [checked]="withoutContainer" (change)="loadContents($event.checked)">
+      Only show contents without a container
+    </mat-checkbox>
+  </span>
+  <mat-form-field class="full-width">
+    <mat-label>Size</mat-label>
+    <mat-select [(value)]="selectedSize">
+      <mat-option value="{{size.index}}" *ngFor="let size of containerSizes">{{size.size}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-button class="full-width" color="primary" type="submit">Add</button>
+</form>

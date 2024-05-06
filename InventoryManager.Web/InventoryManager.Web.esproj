@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.74-alpha">
+
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+    <FrameworkPathOverride>/snap/dotnet-sdk/current/shared/Microsoft.NETCore.App/7.0.5/mscorlib.dll</FrameworkPathOverride>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StartupCommand></StartupCommand>
+    <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
+    <BuildCommand>npm build</BuildCommand>
+    <ProductionBuildCommand>npm build</ProductionBuildCommand>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+    <DefaultItemExcludes>$(DefaultItemExcludes);out\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="src\app\generated" />
+  </ItemGroup>
+</Project>
+

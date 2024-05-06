@@ -1,0 +1,35 @@
+<div class="case-layout-container" cdkDropListGroup>
+  <div class="row-title">
+    <H3 *ngIf="storageCase !== null">{{storageCase.name}}</H3>
+  </div>
+  <div id="case-display" class="case-display" [ngStyle]="getGridStyle()" *ngIf="storageCase !== null"> <!---->
+    <div *ngFor="let cell of storageCaseGrid; let i = index"
+         class="cell"
+         cdkDropList
+         (cdkDropListDropped)="dropInCase($event)"
+         [cdkDropListData]="cell"
+         [cdkDropListEnterPredicate]="enterCasePredicate">
+      @if(cell.content !== undefined)
+      {
+      <div cdkDrag class="cell {{cell.size}}"> <!--*ngIf="cell.content !== undefined"-->
+          <p *ngIf="cell.content !== undefined">{{cell.content?.standard}}</p>
+          <p *ngIf="cell.content !== undefined">{{cell.content?.definition}}</p>
+        </div>
+      }
+    </div>
+  </div>
+  <div id="spacer" style="width: 1fr;"></div>
+  <div class="available"
+       cdkDropList
+       (cdkDropListDropped)="dropInAvailable($event)"
+       [cdkDropListData]="availableContainers"
+       [ngStyle]="getAvailableStyle()">
+    @for (cell of availableContainers; track cell)
+    {
+    <div class="{{cell.size}}" class="cell" cdkDrag>
+              <p *ngIf="cell.content !== undefined">{{cell.content?.standard}}</p>
+              <p *ngIf="cell.content !== undefined">{{cell.content?.definition}}</p>
+            </div>
+    }
+  </div>
+</div>

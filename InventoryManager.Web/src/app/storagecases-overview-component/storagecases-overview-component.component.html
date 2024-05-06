@@ -1,0 +1,9 @@
+<mat-list role="list">
+  <mat-list-item *ngFor="let storageCase of storageCases">
+    <div class="case-list-item">
+    <a [routerLink]="storageCase.id">{{storageCase.name}}</a>
+    <mat-icon fontIcon="print" (click)="generateLid(storageCase.id)" ></mat-icon>
+    <mat-icon fontIcon="label" ></mat-icon>
+    </div>
+  </mat-list-item>
+</mat-list>
