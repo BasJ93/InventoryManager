@@ -5,7 +5,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { ContentClient, ContentTypeDto, CreateContentRequestDto } from "../generated/api.generated.clients";
+import {
+  ContentClient,
+  ContentTypeDto,
+  StandardClient,
+  CreateContentRequestDto,
+  StandardResponseDto
+} from "../generated/api.generated.clients";
 
 @Component({
   selector: 'app-create-content',
@@ -24,13 +30,18 @@ import { ContentClient, ContentTypeDto, CreateContentRequestDto } from "../gener
   styleUrl: './create-content.component.scss'
 })
 export class CreateContentComponent {
-  constructor(private contentClient: ContentClient) {
+  constructor(private contentClient: ContentClient, private standardsClient: StandardClient) {
     this.contentClient.getContentTypes()
       .subscribe(x => this.availableTypes = x);
+
+    this.standardsClient.getStandards()
+      .subscribe(x => this.availableStandards = x);
   }
 
   // property with the available content types
   availableTypes: ContentTypeDto[] = [];
+
+  availableStandards: StandardResponseDto[] = [];
 
   // required properties for the content
   public formGroup = new FormGroup({
@@ -47,7 +58,7 @@ export class CreateContentComponent {
         request.type = Number(this.formGroup.controls["selectedType"].value);
       }
       if (this.formGroup.controls["standard"].value != null) {
-        request.standard = this.formGroup.controls["standard"].value;
+        request.standardId = this.formGroup.controls["standard"].value;
       }
       if (this.formGroup.controls["size"].value != null) {
         request.size = this.formGroup.controls["size"].value;

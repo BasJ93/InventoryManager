@@ -12,6 +12,7 @@ builder.Services.AddDbContext<InventoryManagerContext>(options => options.UseSql
 builder.Services.AddScoped<IStorageCaseService, StorageCaseService>();
 builder.Services.AddScoped<IContainerService, ContainerService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IStandardsService, StandardsService>();
 builder.Services.AddScoped<ReportGenerator>();
 
 builder.Services.AddControllers();

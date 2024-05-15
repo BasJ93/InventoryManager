@@ -12,10 +12,22 @@ StorageCase storageCase = new()
   SizeX = 7,
 };
 
+Standard din912 = new()
+{
+  Name = "DIN912",
+  Description = "Socket head cap screw"
+};
+
+Standard din7505 = new()
+{
+  Name = "DIN7075",
+  Description = "Woodscrew"
+};
+
 Content screwM5X20 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "20"
 };
@@ -23,7 +35,7 @@ Content screwM5X20 = new()
 Content screwM5X25 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "25"
 };
@@ -31,7 +43,7 @@ Content screwM5X25 = new()
 Content screwM5X30 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "30"
 };
@@ -39,7 +51,7 @@ Content screwM5X30 = new()
 Content screwM5X35 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "35"
 };
@@ -47,7 +59,7 @@ Content screwM5X35 = new()
 Content screwM5X40 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "40"
 };
@@ -55,7 +67,7 @@ Content screwM5X40 = new()
 Content screwM5X50 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN912",
+  Standard = din912,
   Size = "M5",
   Length = "50"
 };
@@ -63,7 +75,7 @@ Content screwM5X50 = new()
 Content screw5X80 = new()
 {
   Type = ContentType.Screw,
-  Standard = "DIN7505",
+  Standard = din7505,
   Size = "5,5",
   Length = "80"
 };

@@ -370,7 +370,7 @@ export class ContainerClient implements IContainerClient {
 }
 
 export interface IContentClient {
-    getContents(withoutContainer?: boolean | undefined): Observable<ContentReponseDto[]>;
+    getContents(withoutContainer?: boolean | undefined): Observable<ContentResponseDto[]>;
     createContent(requestDto: CreateContentRequestDto): Observable<void>;
     getContent(id: string): Observable<FileResponse>;
     updateContent(id: string): Observable<FileResponse>;
@@ -388,7 +388,7 @@ export class ContentClient implements IContentClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getContents(withoutContainer?: boolean | undefined): Observable<ContentReponseDto[]> {
+    getContents(withoutContainer?: boolean | undefined): Observable<ContentResponseDto[]> {
         let url_ = this.baseUrl + "/api/Contents?";
         if (withoutContainer === null)
             throw new Error("The parameter 'withoutContainer' cannot be null.");
@@ -411,14 +411,14 @@ export class ContentClient implements IContentClient {
                 try {
                     return this.processGetContents(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ContentReponseDto[]>;
+                    return _observableThrow(e) as any as Observable<ContentResponseDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ContentReponseDto[]>;
+                return _observableThrow(response_) as any as Observable<ContentResponseDto[]>;
         }));
     }
 
-    protected processGetContents(response: HttpResponseBase): Observable<ContentReponseDto[]> {
+    protected processGetContents(response: HttpResponseBase): Observable<ContentResponseDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -432,7 +432,7 @@ export class ContentClient implements IContentClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ContentReponseDto.fromJS(item));
+                    result200!.push(ContentResponseDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -658,6 +658,133 @@ export class ContentClient implements IContentClient {
                 result200 = <any>null;
             }
             return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+export interface IStandardClient {
+    getStandards(): Observable<StandardResponseDto[]>;
+    createStandard(requestDto: CreateStandardRequestDto): Observable<void>;
+}
+
+@Injectable()
+export class StandardClient implements IStandardClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getStandards(): Observable<StandardResponseDto[]> {
+        let url_ = this.baseUrl + "/api/Standards";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStandards(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStandards(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StandardResponseDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StandardResponseDto[]>;
+        }));
+    }
+
+    protected processGetStandards(response: HttpResponseBase): Observable<StandardResponseDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(StandardResponseDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    createStandard(requestDto: CreateStandardRequestDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/Standards";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(requestDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateStandard(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateStandard(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateStandard(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 201) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -1231,7 +1358,7 @@ export enum ContainerSize {
 export class ContainerWithLocationResponseDto extends ContainerResponseDto implements IContainerWithLocationResponseDto {
     positionX!: number;
     positionY!: number;
-    content!: ContentReponseDto | null;
+    content!: ContentResponseDto | null;
 
     constructor(data?: IContainerWithLocationResponseDto) {
         super(data);
@@ -1242,7 +1369,7 @@ export class ContainerWithLocationResponseDto extends ContainerResponseDto imple
         if (_data) {
             this.positionX = _data["positionX"] !== undefined ? _data["positionX"] : <any>null;
             this.positionY = _data["positionY"] !== undefined ? _data["positionY"] : <any>null;
-            this.content = _data["content"] ? ContentReponseDto.fromJS(_data["content"]) : <any>null;
+            this.content = _data["content"] ? ContentResponseDto.fromJS(_data["content"]) : <any>null;
         }
     }
 
@@ -1266,15 +1393,16 @@ export class ContainerWithLocationResponseDto extends ContainerResponseDto imple
 export interface IContainerWithLocationResponseDto extends IContainerResponseDto {
     positionX: number;
     positionY: number;
-    content: ContentReponseDto | null;
+    content: ContentResponseDto | null;
 }
 
-export class ContentReponseDto implements IContentReponseDto {
+export class ContentResponseDto implements IContentResponseDto {
     id!: string;
     standard!: string;
     definition!: string;
+    description!: string;
 
-    constructor(data?: IContentReponseDto) {
+    constructor(data?: IContentResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1288,12 +1416,13 @@ export class ContentReponseDto implements IContentReponseDto {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.standard = _data["standard"] !== undefined ? _data["standard"] : <any>null;
             this.definition = _data["definition"] !== undefined ? _data["definition"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
         }
     }
 
-    static fromJS(data: any): ContentReponseDto {
+    static fromJS(data: any): ContentResponseDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ContentReponseDto();
+        let result = new ContentResponseDto();
         result.init(data);
         return result;
     }
@@ -1303,14 +1432,16 @@ export class ContentReponseDto implements IContentReponseDto {
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["standard"] = this.standard !== undefined ? this.standard : <any>null;
         data["definition"] = this.definition !== undefined ? this.definition : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
         return data;
     }
 }
 
-export interface IContentReponseDto {
+export interface IContentResponseDto {
     id: string;
     standard: string;
     definition: string;
+    description: string;
 }
 
 export class ContainerSizeDto implements IContainerSizeDto {
@@ -1355,7 +1486,7 @@ export interface IContainerSizeDto {
 
 export class CreateContentRequestDto implements ICreateContentRequestDto {
     type!: ContentType;
-    standard!: string;
+    standardId!: string;
     size!: string;
     length!: string;
 
@@ -1371,7 +1502,7 @@ export class CreateContentRequestDto implements ICreateContentRequestDto {
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
-            this.standard = _data["standard"] !== undefined ? _data["standard"] : <any>null;
+            this.standardId = _data["standardId"] !== undefined ? _data["standardId"] : <any>null;
             this.size = _data["size"] !== undefined ? _data["size"] : <any>null;
             this.length = _data["length"] !== undefined ? _data["length"] : <any>null;
         }
@@ -1387,7 +1518,7 @@ export class CreateContentRequestDto implements ICreateContentRequestDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type !== undefined ? this.type : <any>null;
-        data["standard"] = this.standard !== undefined ? this.standard : <any>null;
+        data["standardId"] = this.standardId !== undefined ? this.standardId : <any>null;
         data["size"] = this.size !== undefined ? this.size : <any>null;
         data["length"] = this.length !== undefined ? this.length : <any>null;
         return data;
@@ -1396,7 +1527,7 @@ export class CreateContentRequestDto implements ICreateContentRequestDto {
 
 export interface ICreateContentRequestDto {
     type: ContentType;
-    standard: string;
+    standardId: string;
     size: string;
     length: string;
 }
@@ -1449,6 +1580,105 @@ export class ContentTypeDto implements IContentTypeDto {
 export interface IContentTypeDto {
     index: number;
     type: string;
+}
+
+export class StandardResponseDto implements IStandardResponseDto {
+    id!: string;
+    name!: string;
+    description!: string | null;
+
+    constructor(data?: IStandardResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): StandardResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StandardResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
+        return data;
+    }
+}
+
+export interface IStandardResponseDto {
+    id: string;
+    name: string;
+    description: string | null;
+}
+
+export class CreateStandardRequestDto implements ICreateStandardRequestDto {
+    name!: string;
+    description!: string | null;
+    alternativeNames!: string[];
+
+    constructor(data?: ICreateStandardRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
+            if (Array.isArray(_data["alternativeNames"])) {
+                this.alternativeNames = [] as any;
+                for (let item of _data["alternativeNames"])
+                    this.alternativeNames!.push(item);
+            }
+            else {
+                this.alternativeNames = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateStandardRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateStandardRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
+        if (Array.isArray(this.alternativeNames)) {
+            data["alternativeNames"] = [];
+            for (let item of this.alternativeNames)
+                data["alternativeNames"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ICreateStandardRequestDto {
+    name: string;
+    description: string | null;
+    alternativeNames: string[];
 }
 
 export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {

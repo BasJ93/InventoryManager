@@ -6,7 +6,7 @@ namespace InventoryManager.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]s")]
-public class ContentController : Controller
+public class ContentController : ControllerBase
 {
     private readonly IContentService _contentService;
 
@@ -23,7 +23,7 @@ public class ContentController : Controller
     /// <returns>A list of contents.</returns>
     /// <response code="200">Success</response>
     [HttpGet]
-    [ProducesResponseType(typeof(List<ContentReponseDto>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ContentResponseDto>),StatusCodes.Status200OK)]
     public async Task<IActionResult> GetContents([FromQuery] bool withoutContainer = true, CancellationToken ctx = default)
     {
         return Ok(await _contentService.GetAllContents(withoutContainer, ctx));

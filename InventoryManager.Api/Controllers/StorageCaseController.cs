@@ -6,7 +6,7 @@ namespace InventoryManager.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]s")]
-public class StorageCaseController : Controller
+public class StorageCaseController : ControllerBase
 {
     private readonly IStorageCaseService _storageCaseService;
 

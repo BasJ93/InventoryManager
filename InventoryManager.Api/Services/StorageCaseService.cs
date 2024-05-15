@@ -32,6 +32,7 @@ public class StorageCaseService : IStorageCaseService
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
+            .ThenInclude(c => c.Standard)
             .FirstOrDefaultAsync(ctx);
 
         if (storageCase == default)
@@ -121,6 +122,7 @@ public class StorageCaseService : IStorageCaseService
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
+            .ThenInclude(c => c.Standard)
             .FirstOrDefaultAsync(ctx);
 
         if (storageCase == default)

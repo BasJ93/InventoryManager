@@ -6,7 +6,7 @@ namespace InventoryManager.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]s")]
-public class ContainerController : Controller
+public class ContainerController : ControllerBase
 {
     private readonly IContainerService _containerService;
 

@@ -14,6 +14,8 @@ public class InventoryManagerContext : DbContext
 
     public DbSet<CaseContainerPosition> CaseContainerPositions => Set<CaseContainerPosition>();
 
+    public DbSet<Standard> Standards => Set<Standard>();
+    
     public InventoryManagerContext(DbContextOptions<InventoryManagerContext> options)
         : base(options)
     {

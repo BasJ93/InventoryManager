@@ -20,7 +20,7 @@ public static class LidCellExtensions
     
     public static void LidCell(this IContainer container, Container storageContainer)
     {
-        switch (storageContainer.Content.Type)
+        switch (storageContainer.Content?.Type)
         {
             case ContentType.Screw:
                 container.LidScrew(storageContainer.Content, _cellHeight * storageContainer.Height());
@@ -38,13 +38,13 @@ public static class LidCellExtensions
 
     private static void LidScrew(this IContainer container, Content content, float height = 0)
     {
-        container.LidCell(content.Standard, content.Screw, height);
+        container.LidCell(content.Standard?.Name, content.Screw, height);
     }
     
     // TODO: Come up with a better name.
     private static void LidSimple(this IContainer container, Content content, float height = 0)
     {
-        container.LidCell(content.Standard, content.Size, height);
+        container.LidCell(content.Standard?.Name, content.Size, height);
     }
     
     public static IContainer HiddenLidCell(this ITableCellContainer container)
