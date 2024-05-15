@@ -8,10 +8,12 @@ public class Content
 
     public ContentType Type { get; set; }
 
+    public Guid StandardId { get; set; } = Guid.Empty;
+    
     /// <summary>
     /// The standard use to define this item. i.e. ISO/DIN
     /// </summary>
-    public string Standard { get; set; } = string.Empty;
+    public virtual Standard? Standard { get; set; }
 
     public string Size { get; set; } = string.Empty;
 

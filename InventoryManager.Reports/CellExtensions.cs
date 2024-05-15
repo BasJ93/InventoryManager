@@ -58,7 +58,7 @@ public static class CellExtensions
     
     public static void LabelCell(this ITableCellContainer container, Container storageContainer)
     {
-        switch (storageContainer.Content.Type)
+        switch (storageContainer.Content?.Type)
         {
             case ContentType.Screw:
                 container.BaseLabelCell()
@@ -67,7 +67,7 @@ public static class CellExtensions
                         // Set alignment
                         text.AlignCenter();
                         // Set content
-                        text.Span(storageContainer.Content.Standard).Style(LabelTypography.Specification);
+                        text.Span(storageContainer.Content.Standard?.Name).Style(LabelTypography.Specification);
                         text.EmptyLine();
                         text.Span(storageContainer.Content.Screw).Style(LabelTypography.Dimension);
                     });
@@ -79,7 +79,7 @@ public static class CellExtensions
                         // Set alignment
                         text.AlignCenter();
                         // Set content
-                        text.Span(storageContainer.Content.Standard).Style(LabelTypography.Specification);
+                        text.Span(storageContainer.Content.Standard?.Name).Style(LabelTypography.Specification);
                         text.EmptyLine();
                         text.Span(storageContainer.Content.Size).Style(LabelTypography.Dimension);
                     });

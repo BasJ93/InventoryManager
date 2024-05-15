@@ -4,7 +4,13 @@ import { provideHttpClient } from '@angular/common/http'
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { API_BASE_URL, ContainerClient, StorageCaseClient, ContentClient } from "./generated/api.generated.clients";
+import {
+  API_BASE_URL,
+  ContainerClient,
+  StorageCaseClient,
+  ContentClient,
+  StandardClient
+} from "./generated/api.generated.clients";
 import { environment } from "../environments/environment";
 
 export const appConfig: ApplicationConfig = {
@@ -15,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     { provide: API_BASE_URL, useValue: environment.basePath },
     { provide: ContainerClient },
     { provide: StorageCaseClient },
-    { provide: ContentClient }
+    { provide: ContentClient },
+    { provide: StandardClient}
   ]
 };

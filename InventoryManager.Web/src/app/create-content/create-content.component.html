@@ -8,7 +8,10 @@
   </mat-form-field>
   <mat-form-field class="full-width" *ngIf="formGroup.controls['selectedType'].value == 2 || formGroup.controls['selectedType'].value == 5  || formGroup.controls['selectedType'].value == 6">
     <mat-label>Standard</mat-label>
-    <input matInput formControlName="standard" />
+    <mat-select formControlName="standard">
+      <mat-option value="{{standard.id}}"
+                  *ngFor="let standard of availableStandards">{{standard.name}} {{standard.description}}</mat-option>
+    </mat-select>
   </mat-form-field>
   <mat-form-field class="full-width" *ngIf="formGroup.controls['selectedType'].value == 2 || formGroup.controls['selectedType'].value == 5 || formGroup.controls['selectedType'].value == 6">
     <mat-label>Size</mat-label>

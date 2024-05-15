@@ -24,8 +24,8 @@ public class ContentConfiguration : IEntityTypeConfiguration<Content>
             .HasColumnType(DbTypes.Int)
             .IsRequired();
 
-        builder.Property(x => x.Standard)
-            .HasColumnType(DbTypes.NVarCharMax)
+        builder.Property(x => x.StandardId)
+            .HasColumnType(DbTypes.Guid)
             .IsRequired();
         
         builder.Property(x => x.Size)
@@ -35,6 +35,11 @@ public class ContentConfiguration : IEntityTypeConfiguration<Content>
         builder.Property(x => x.Length)
             .HasColumnType(DbTypes.NVarCharMax)
             .IsRequired();
+
+        builder.HasOne(x => x.Standard)
+            .WithMany(x => x.Contents)
+            .HasForeignKey(x => x.StandardId)
+            .HasConstraintName($"FK_{nameof(Content)}_{nameof(Standard)}");
         
         // TODO: Consider forcing the combination of type + standard + size + length to be unique 
     }

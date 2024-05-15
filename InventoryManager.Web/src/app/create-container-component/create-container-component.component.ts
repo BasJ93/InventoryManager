@@ -10,7 +10,7 @@ import {
   ContainerClient,
   ContainerSizeDto,
   ContentClient,
-  ContentReponseDto, CreateContainerRequestDto
+  ContentResponseDto, CreateContainerRequestDto
 } from "../generated/api.generated.clients";
 
 
@@ -41,7 +41,7 @@ export class CreateContainerComponentComponent {
 
   containerSizes: ContainerSizeDto[] = [];
 
-  availableContents$: Subject<ContentReponseDto[]> = new Subject<ContentReponseDto[]>();
+  availableContents$: Subject<ContentResponseDto[]> = new Subject<ContentResponseDto[]>();
 
   selectedContent: string = '';
 

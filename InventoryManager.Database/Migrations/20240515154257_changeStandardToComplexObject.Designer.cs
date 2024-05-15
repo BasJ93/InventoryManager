@@ -4,6 +4,7 @@ using InventoryManager.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryManager.Database.Migrations
 {
     [DbContext(typeof(InventoryManagerContext))]
-    partial class InventoryManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240515154257_changeStandardToComplexObject")]
+    partial class changeStandardToComplexObject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,14 +100,14 @@ namespace InventoryManager.Database.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("UNIQUEIDENTIFIER")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("UNIQUEIDENTIFIER");
 
                     b.Property<string>("AlternativeNames")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<string>("Name")

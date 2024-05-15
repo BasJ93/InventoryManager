@@ -9,7 +9,7 @@ public class CreateContentRequestDto
     /// <summary>
     /// The standard use to define this item. i.e. ISO/DIN
     /// </summary>
-    public string Standard { get; set; } = string.Empty;
+    public Guid StandardId { get; set; } = Guid.Empty;
 
     public string Size { get; set; } = string.Empty;
 

@@ -24,7 +24,7 @@ public class ContentService : IContentService
         Content newContent = new()
         {
             Type = requestDto.Type,
-            Standard = requestDto.Standard,
+            StandardId = requestDto.StandardId,
             Size = requestDto.Size,
             Length = requestDto.Length,
         };
@@ -42,9 +42,9 @@ public class ContentService : IContentService
         return newContent.Id;
     }
 
-    public async Task<List<ContentReponseDto>> GetAllContents(bool withoutContainer = true, CancellationToken ctx = default)
+    public async Task<List<ContentResponseDto>> GetAllContents(bool withoutContainer = true, CancellationToken ctx = default)
     {
-        IIncludableQueryable<Content,ICollection<Container>> queryable = _db.Contents.Include(x => x.Containers);
+        IIncludableQueryable<Content,ICollection<Container>> queryable = _db.Contents.Include(x => x.Standard).Include(x => x.Containers);
 
         if (withoutContainer)
         {

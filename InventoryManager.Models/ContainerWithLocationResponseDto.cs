@@ -6,5 +6,5 @@ public class ContainerWithLocationResponseDto : ContainerResponseDto
 
     public int PositionY { get; set; }
     
-    public ContentReponseDto? Content { get; set; }
+    public ContentResponseDto? Content { get; set; }
 }

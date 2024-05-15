@@ -1,25 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common';
-import { ContentClient, ContentReponseDto } from "../generated/api.generated.clients";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgFor, TitleCasePipe } from '@angular/common'
+import { ContentClient, ContentResponseDto } from "../generated/api.generated.clients";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table"
+import { MatSortModule, MatSort, Sort } from '@angular/material/sort'
 
 @Component({
   selector: 'app-contents-overview-component',
   standalone: true,
   imports: [
-    NgFor
+    MatTableModule,
+    MatSortModule,
+    MatSort,
+    NgFor,
+    TitleCasePipe
   ],
   templateUrl: './contents-overview-component.component.html',
   styleUrl: './contents-overview-component.component.scss',
 })
-export class ContentsOverviewComponentComponent implements OnInit {
+export class ContentsOverviewComponentComponent implements OnInit{
 
-  contents: ContentReponseDto[]= [];
+  contents: MatTableDataSource<ContentResponseDto> = new MatTableDataSource<ContentResponseDto>();
+
+  tableColumns: string[] = ['definition', 'standard', 'description']
+
+  @ViewChild('contentTblSort') contentTblSort = new MatSort();
 
   constructor(private contentClient: ContentClient) {
   }
 
   ngOnInit(): void {
-    this.contentClient.getContents()
-      .subscribe(x =>this.contents = x);
+    this.contentClient.getContents(false)
+      .subscribe(x => {
+        this.contents.data = x;
+        this.contents.sort = this.contentTblSort;
+      });
   }
 }

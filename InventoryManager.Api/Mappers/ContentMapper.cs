@@ -8,11 +8,13 @@ namespace InventoryManager.Api.Mappers;
 [Mapper]
 public static partial class ContentMapper
 {
-    private static partial ContentReponseDto MapToContentResponseDto(Content content);
+    [MapProperty("Standard.Name", nameof(ContentResponseDto.Standard))]
+    [MapProperty("Standard.Description", nameof(ContentResponseDto.Description))]
+    private static partial ContentResponseDto MapToContentResponseDto(Content content);
 
-    public static ContentReponseDto ToContentResponseDto(Content content)
+    public static ContentResponseDto ToContentResponseDto(Content content)
     {
-        ContentReponseDto dto = MapToContentResponseDto(content);
+        ContentResponseDto dto = MapToContentResponseDto(content);
 
         switch (content.Type)
         {
