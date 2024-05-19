@@ -31,10 +31,15 @@ export class StoragecasesOverviewComponentComponent implements OnInit {
 
   generateLid(caseId: string): void {
     this.storageCaseClient.getLidInsertForCase(caseId)
-      .subscribe(x => saveAs(x.data, x.fileName));
+      .subscribe(x => {
+        saveAs(x.data, x.fileName)
+      });
   }
 
   generateLabels(caseId: string): void {
-
+    this.storageCaseClient.getLabelsForCase(caseId)
+      .subscribe(x => {
+        saveAs(x.data, x.fileName)
+      });
   }
 }
