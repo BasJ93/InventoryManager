@@ -4,7 +4,7 @@ namespace InventoryManager.Api.Services;
 
 public interface IContainerService
 {
-    Task<List<ContainerResponseDto>> GetAllContainers(CancellationToken ctx = default);
+    Task<List<ContainerOverviewResponseDto>> GetAllContainers(CancellationToken ctx = default);
 
     List<ContainerSizeDto> GetContainerSizes();
     

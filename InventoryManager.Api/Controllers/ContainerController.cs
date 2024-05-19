@@ -16,7 +16,7 @@ public class ContainerController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(List<ContainerResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ContainerOverviewResponseDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetContainers(CancellationToken ctx = default)
     {
         return Ok(await _containerService.GetAllContainers(ctx));
