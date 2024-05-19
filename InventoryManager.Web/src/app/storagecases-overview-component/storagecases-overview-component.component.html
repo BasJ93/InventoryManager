@@ -3,7 +3,7 @@
     <div class="case-list-item">
     <a [routerLink]="storageCase.id">{{storageCase.name}}</a>
     <mat-icon fontIcon="print" (click)="generateLid(storageCase.id)" ></mat-icon>
-    <mat-icon fontIcon="label" ></mat-icon>
+    <mat-icon fontIcon="label" (click)="generateLabels(storageCase.id)"></mat-icon>
     </div>
   </mat-list-item>
 </mat-list>

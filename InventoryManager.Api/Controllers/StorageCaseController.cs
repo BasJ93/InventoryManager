@@ -93,4 +93,23 @@ public class StorageCaseController : ControllerBase
 
         return fileStreamResult;
     }
+    
+    [HttpGet("{id:guid}/labels")]
+    [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLabelsForCase([FromRoute] Guid id, CancellationToken ctx = default)
+    {
+        (MemoryStream? labelsPdf, string? fileName) = await _storageCaseService.GenerateLabelsPdf(id, ctx);
+
+        if (labelsPdf == default)
+        {
+            return NotFound();
+        }
+        
+        FileStreamResult fileStreamResult = new FileStreamResult(labelsPdf, "application/pdf")
+        {
+            FileDownloadName = fileName,
+        };
+
+        return fileStreamResult;
+    }
 }

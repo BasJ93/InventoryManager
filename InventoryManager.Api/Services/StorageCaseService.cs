@@ -4,7 +4,6 @@ using InventoryManager.Domain;
 using InventoryManager.Models;
 using InventoryManager.Reports;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InventoryManager.Api.Services;
 
@@ -114,6 +113,27 @@ public class StorageCaseService : IStorageCaseService
         }
 
         return false;
+    }
+
+    public async Task<(MemoryStream?, string?)> GenerateLabelsPdf(Guid id, CancellationToken ctx = default)
+    {
+        StorageCase? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+            .Include(x => x.Containers)
+            .ThenInclude(y => y.Container)
+            .ThenInclude(z => z.Content)
+            .ThenInclude(c => c.Standard)
+            .FirstOrDefaultAsync(ctx);
+
+        if (storageCase == default)
+        {
+            return (null, null);
+        }
+        
+        MemoryStream labelsSheet = _reportGenerator.GenerateContainerLabelsSheet(storageCase);
+
+        labelsSheet.Position = 0;
+
+        return (labelsSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageCase.Name}-labels.pdf");
     }
 
     public async Task<(MemoryStream?, string?)> GenerateLidPdf(Guid id, CancellationToken ctx = default)

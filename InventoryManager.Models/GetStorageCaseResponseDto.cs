@@ -2,7 +2,7 @@ namespace InventoryManager.Models;
 
 public class GetStorageCaseResponseDto
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.Empty;
 
     public string Name { get; set; } = string.Empty;
 
@@ -11,6 +11,6 @@ public class GetStorageCaseResponseDto
     public int SizeX { get; set; }
 
     public int SizeY { get; set; }
-    
-    public List<ContainerWithLocationResponseDto> Containers { get; set; }
+
+    public List<ContainerWithLocationResponseDto> Containers { get; set; } = new();
 }
