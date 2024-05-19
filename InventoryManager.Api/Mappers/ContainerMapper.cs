@@ -25,4 +25,12 @@ public static partial class ContainerMapper
 
         return dto;
     }
+    
+    public static partial IQueryable<ContainerOverviewResponseDto> ProjectToDto(this IQueryable<Container> q);
+
+    [MapProperty("Position.Case" ,nameof(ContainerOverviewResponseDto.Location))]
+    private static partial ContainerOverviewResponseDto Map(Container container);
+
+    private static ContentResponseDto MapContentStandard(Content content)
+        => ContentMapper.ToContentResponseDto(content);
 }

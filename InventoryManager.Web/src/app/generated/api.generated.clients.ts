@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IContainerClient {
-    getContainers(): Observable<ContainerResponseDto[]>;
+    getContainers(): Observable<ContainerOverviewResponseDto[]>;
     createContainer(requestDto: CreateContainerRequestDto): Observable<void>;
     getContainer(id: string): Observable<ContainerResponseDto>;
     updateContainer(id: string): Observable<FileResponse>;
@@ -35,7 +35,7 @@ export class ContainerClient implements IContainerClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getContainers(): Observable<ContainerResponseDto[]> {
+    getContainers(): Observable<ContainerOverviewResponseDto[]> {
         let url_ = this.baseUrl + "/api/Containers";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -54,14 +54,14 @@ export class ContainerClient implements IContainerClient {
                 try {
                     return this.processGetContainers(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ContainerResponseDto[]>;
+                    return _observableThrow(e) as any as Observable<ContainerOverviewResponseDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ContainerResponseDto[]>;
+                return _observableThrow(response_) as any as Observable<ContainerOverviewResponseDto[]>;
         }));
     }
 
-    protected processGetContainers(response: HttpResponseBase): Observable<ContainerResponseDto[]> {
+    protected processGetContainers(response: HttpResponseBase): Observable<ContainerOverviewResponseDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -75,7 +75,7 @@ export class ContainerClient implements IContainerClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ContainerResponseDto.fromJS(item));
+                    result200!.push(ContainerOverviewResponseDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -1301,6 +1301,135 @@ export interface IContainerResponseDto {
     size: string;
 }
 
+export class ContainerOverviewResponseDto extends ContainerResponseDto implements IContainerOverviewResponseDto {
+    location!: GetStorageCasesResponseDto | null;
+    content!: ContentResponseDto | null;
+
+    constructor(data?: IContainerOverviewResponseDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.location = _data["location"] ? GetStorageCasesResponseDto.fromJS(_data["location"]) : <any>null;
+            this.content = _data["content"] ? ContentResponseDto.fromJS(_data["content"]) : <any>null;
+        }
+    }
+
+    static override fromJS(data: any): ContainerOverviewResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContainerOverviewResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["location"] = this.location ? this.location.toJSON() : <any>null;
+        data["content"] = this.content ? this.content.toJSON() : <any>null;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IContainerOverviewResponseDto extends IContainerResponseDto {
+    location: GetStorageCasesResponseDto | null;
+    content: ContentResponseDto | null;
+}
+
+export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {
+    id!: string;
+    name!: string;
+    size!: string;
+
+    constructor(data?: IGetStorageCasesResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.size = _data["size"] !== undefined ? _data["size"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetStorageCasesResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStorageCasesResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["size"] = this.size !== undefined ? this.size : <any>null;
+        return data;
+    }
+}
+
+export interface IGetStorageCasesResponseDto {
+    id: string;
+    name: string;
+    size: string;
+}
+
+export class ContentResponseDto implements IContentResponseDto {
+    id!: string;
+    standard!: string;
+    definition!: string;
+    description!: string;
+
+    constructor(data?: IContentResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.standard = _data["standard"] !== undefined ? _data["standard"] : <any>null;
+            this.definition = _data["definition"] !== undefined ? _data["definition"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): ContentResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContentResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["standard"] = this.standard !== undefined ? this.standard : <any>null;
+        data["definition"] = this.definition !== undefined ? this.definition : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
+        return data;
+    }
+}
+
+export interface IContentResponseDto {
+    id: string;
+    standard: string;
+    definition: string;
+    description: string;
+}
+
 export class ProblemDetails implements IProblemDetails {
     type!: string | null;
     title!: string | null;
@@ -1450,54 +1579,6 @@ export interface IContainerWithLocationResponseDto extends IContainerResponseDto
     positionX: number;
     positionY: number;
     content: ContentResponseDto | null;
-}
-
-export class ContentResponseDto implements IContentResponseDto {
-    id!: string;
-    standard!: string;
-    definition!: string;
-    description!: string;
-
-    constructor(data?: IContentResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            this.standard = _data["standard"] !== undefined ? _data["standard"] : <any>null;
-            this.definition = _data["definition"] !== undefined ? _data["definition"] : <any>null;
-            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): ContentResponseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContentResponseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["standard"] = this.standard !== undefined ? this.standard : <any>null;
-        data["definition"] = this.definition !== undefined ? this.definition : <any>null;
-        data["description"] = this.description !== undefined ? this.description : <any>null;
-        return data;
-    }
-}
-
-export interface IContentResponseDto {
-    id: string;
-    standard: string;
-    definition: string;
-    description: string;
 }
 
 export class ContainerSizeDto implements IContainerSizeDto {
@@ -1735,50 +1816,6 @@ export interface ICreateStandardRequestDto {
     name: string;
     description: string | null;
     alternativeNames: string[];
-}
-
-export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {
-    id!: string;
-    name!: string;
-    size!: string;
-
-    constructor(data?: IGetStorageCasesResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
-            this.size = _data["size"] !== undefined ? _data["size"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): GetStorageCasesResponseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetStorageCasesResponseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
-        data["size"] = this.size !== undefined ? this.size : <any>null;
-        return data;
-    }
-}
-
-export interface IGetStorageCasesResponseDto {
-    id: string;
-    name: string;
-    size: string;
 }
 
 export class CreateStorageCaseRequestDto implements ICreateStorageCaseRequestDto {

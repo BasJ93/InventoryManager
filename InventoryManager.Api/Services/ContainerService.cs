@@ -18,9 +18,15 @@ public class ContainerService : IContainerService
         _db = db;
     }
 
-    public async Task<List<ContainerResponseDto>> GetAllContainers(CancellationToken ctx = default)
+    public async Task<List<ContainerOverviewResponseDto>> GetAllContainers(CancellationToken ctx = default)
     {
-        return await _db.Containers.Select(x => ContainerMapper.ToContainerResponseDto(x)).ToListAsync(ctx);
+        return await _db.Containers
+            .Include(x => x.Content)
+            .ThenInclude(c => c.Standard)
+            .Include(x => x.Position)
+            .ThenInclude(p => p.Case)
+            .ProjectToDto()
+            .ToListAsync(ctx);
     }
 
     public List<ContainerSizeDto> GetContainerSizes()
