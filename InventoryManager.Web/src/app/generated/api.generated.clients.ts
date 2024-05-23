@@ -848,19 +848,19 @@ export class StandardClient implements IStandardClient {
     }
 }
 
-export interface IStorageCaseClient {
-    getCases(): Observable<GetStorageCasesResponseDto[]>;
-    createCase(requestDto: CreateStorageCaseRequestDto): Observable<void>;
-    getCase(id: string): Observable<GetStorageCaseResponseDto>;
-    updateCase(id: string): Observable<FileResponse>;
-    putContainerInCase(id: string, x: number, y: number, containerId: string): Observable<void>;
-    removeContainerFromCase(id: string, x: number, y: number): Observable<void>;
-    getLidInsertForCase(id: string): Observable<FileResponse>;
-    getLabelsForCase(id: string): Observable<FileResponse>;
+export interface IStorageLocationClient {
+    getStorageLocations(): Observable<GetStorageLocationsResponseDto[]>;
+    createStorageLocation(requestDto: CreateStorageLocationRequestDto): Observable<void>;
+    getStorageLocation(id: string): Observable<GetStorageLocationResponseDto>;
+    updateStorageLocation(id: string): Observable<FileResponse>;
+    putContainerInStorageLocation(id: string, x: number, y: number, containerId: string): Observable<void>;
+    removeContainerFromStorageLocation(id: string, x: number, y: number): Observable<void>;
+    getLidInsertForStorageLocation(id: string): Observable<FileResponse>;
+    getLabelsForStorageLocation(id: string): Observable<FileResponse>;
 }
 
 @Injectable()
-export class StorageCaseClient implements IStorageCaseClient {
+export class StorageLocationClient implements IStorageLocationClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -870,8 +870,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getCases(): Observable<GetStorageCasesResponseDto[]> {
-        let url_ = this.baseUrl + "/api/StorageCases";
+    getStorageLocations(): Observable<GetStorageLocationsResponseDto[]> {
+        let url_ = this.baseUrl + "/api/StorageLocations";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -883,20 +883,20 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCases(response_);
+            return this.processGetStorageLocations(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCases(response_ as any);
+                    return this.processGetStorageLocations(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<GetStorageCasesResponseDto[]>;
+                    return _observableThrow(e) as any as Observable<GetStorageLocationsResponseDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<GetStorageCasesResponseDto[]>;
+                return _observableThrow(response_) as any as Observable<GetStorageLocationsResponseDto[]>;
         }));
     }
 
-    protected processGetCases(response: HttpResponseBase): Observable<GetStorageCasesResponseDto[]> {
+    protected processGetStorageLocations(response: HttpResponseBase): Observable<GetStorageLocationsResponseDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -910,7 +910,7 @@ export class StorageCaseClient implements IStorageCaseClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(GetStorageCasesResponseDto.fromJS(item));
+                    result200!.push(GetStorageLocationsResponseDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -925,8 +925,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    createCase(requestDto: CreateStorageCaseRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/StorageCases";
+    createStorageLocation(requestDto: CreateStorageLocationRequestDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/StorageLocations";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(requestDto);
@@ -941,11 +941,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateCase(response_);
+            return this.processCreateStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateCase(response_ as any);
+                    return this.processCreateStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -954,7 +954,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processCreateCase(response: HttpResponseBase): Observable<void> {
+    protected processCreateStorageLocation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -980,8 +980,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    getCase(id: string): Observable<GetStorageCaseResponseDto> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}";
+    getStorageLocation(id: string): Observable<GetStorageLocationResponseDto> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -996,20 +996,20 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCase(response_);
+            return this.processGetStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCase(response_ as any);
+                    return this.processGetStorageLocation(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<GetStorageCaseResponseDto>;
+                    return _observableThrow(e) as any as Observable<GetStorageLocationResponseDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<GetStorageCaseResponseDto>;
+                return _observableThrow(response_) as any as Observable<GetStorageLocationResponseDto>;
         }));
     }
 
-    protected processGetCase(response: HttpResponseBase): Observable<GetStorageCaseResponseDto> {
+    protected processGetStorageLocation(response: HttpResponseBase): Observable<GetStorageLocationResponseDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1020,7 +1020,7 @@ export class StorageCaseClient implements IStorageCaseClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = GetStorageCaseResponseDto.fromJS(resultData200);
+            result200 = GetStorageLocationResponseDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status === 404) {
@@ -1038,8 +1038,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    updateCase(id: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}";
+    updateStorageLocation(id: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -1054,11 +1054,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("patch", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCase(response_);
+            return this.processUpdateStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateCase(response_ as any);
+                    return this.processUpdateStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<FileResponse>;
                 }
@@ -1067,7 +1067,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processUpdateCase(response: HttpResponseBase): Observable<FileResponse> {
+    protected processUpdateStorageLocation(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1093,8 +1093,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    putContainerInCase(id: string, x: number, y: number, containerId: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}/{x}/{y}";
+    putContainerInStorageLocation(id: string, x: number, y: number, containerId: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}/{x}/{y}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -1118,11 +1118,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPutContainerInCase(response_);
+            return this.processPutContainerInStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processPutContainerInCase(response_ as any);
+                    return this.processPutContainerInStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -1131,7 +1131,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processPutContainerInCase(response: HttpResponseBase): Observable<void> {
+    protected processPutContainerInStorageLocation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1150,8 +1150,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    removeContainerFromCase(id: string, x: number, y: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}/{x}/{y}";
+    removeContainerFromStorageLocation(id: string, x: number, y: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}/{x}/{y}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -1171,11 +1171,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRemoveContainerFromCase(response_);
+            return this.processRemoveContainerFromStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processRemoveContainerFromCase(response_ as any);
+                    return this.processRemoveContainerFromStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -1184,7 +1184,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processRemoveContainerFromCase(response: HttpResponseBase): Observable<void> {
+    protected processRemoveContainerFromStorageLocation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1203,8 +1203,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    getLidInsertForCase(id: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}/lid";
+    getLidInsertForStorageLocation(id: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}/lid";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -1219,11 +1219,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLidInsertForCase(response_);
+            return this.processGetLidInsertForStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetLidInsertForCase(response_ as any);
+                    return this.processGetLidInsertForStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<FileResponse>;
                 }
@@ -1232,7 +1232,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processGetLidInsertForCase(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetLidInsertForStorageLocation(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1258,8 +1258,8 @@ export class StorageCaseClient implements IStorageCaseClient {
         return _observableOf(null as any);
     }
 
-    getLabelsForCase(id: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/StorageCases/{id}/labels";
+    getLabelsForStorageLocation(id: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}/labels";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -1274,11 +1274,11 @@ export class StorageCaseClient implements IStorageCaseClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLabelsForCase(response_);
+            return this.processGetLabelsForStorageLocation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetLabelsForCase(response_ as any);
+                    return this.processGetLabelsForStorageLocation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<FileResponse>;
                 }
@@ -1287,7 +1287,7 @@ export class StorageCaseClient implements IStorageCaseClient {
         }));
     }
 
-    protected processGetLabelsForCase(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetLabelsForStorageLocation(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1355,7 +1355,7 @@ export interface IContainerResponseDto {
 }
 
 export class ContainerOverviewResponseDto extends ContainerResponseDto implements IContainerOverviewResponseDto {
-    location!: GetStorageCasesResponseDto | null;
+    location!: GetStorageLocationsResponseDto | null;
     content!: ContentResponseDto | null;
 
     constructor(data?: IContainerOverviewResponseDto) {
@@ -1365,7 +1365,7 @@ export class ContainerOverviewResponseDto extends ContainerResponseDto implement
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.location = _data["location"] ? GetStorageCasesResponseDto.fromJS(_data["location"]) : <any>null;
+            this.location = _data["location"] ? GetStorageLocationsResponseDto.fromJS(_data["location"]) : <any>null;
             this.content = _data["content"] ? ContentResponseDto.fromJS(_data["content"]) : <any>null;
         }
     }
@@ -1387,16 +1387,16 @@ export class ContainerOverviewResponseDto extends ContainerResponseDto implement
 }
 
 export interface IContainerOverviewResponseDto extends IContainerResponseDto {
-    location: GetStorageCasesResponseDto | null;
+    location: GetStorageLocationsResponseDto | null;
     content: ContentResponseDto | null;
 }
 
-export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {
+export class GetStorageLocationsResponseDto implements IGetStorageLocationsResponseDto {
     id!: string;
     name!: string;
     size!: string;
 
-    constructor(data?: IGetStorageCasesResponseDto) {
+    constructor(data?: IGetStorageLocationsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1413,9 +1413,9 @@ export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {
         }
     }
 
-    static fromJS(data: any): GetStorageCasesResponseDto {
+    static fromJS(data: any): GetStorageLocationsResponseDto {
         data = typeof data === 'object' ? data : {};
-        let result = new GetStorageCasesResponseDto();
+        let result = new GetStorageLocationsResponseDto();
         result.init(data);
         return result;
     }
@@ -1429,7 +1429,7 @@ export class GetStorageCasesResponseDto implements IGetStorageCasesResponseDto {
     }
 }
 
-export interface IGetStorageCasesResponseDto {
+export interface IGetStorageLocationsResponseDto {
     id: string;
     name: string;
     size: string;
@@ -1871,12 +1871,12 @@ export interface ICreateStandardRequestDto {
     alternativeNames: string[];
 }
 
-export class CreateStorageCaseRequestDto implements ICreateStorageCaseRequestDto {
+export class CreateStorageLocationRequestDto implements ICreateStorageLocationRequestDto {
     name!: string;
     sizeX!: number;
     sizeY!: number;
 
-    constructor(data?: ICreateStorageCaseRequestDto) {
+    constructor(data?: ICreateStorageLocationRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1893,9 +1893,9 @@ export class CreateStorageCaseRequestDto implements ICreateStorageCaseRequestDto
         }
     }
 
-    static fromJS(data: any): CreateStorageCaseRequestDto {
+    static fromJS(data: any): CreateStorageLocationRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateStorageCaseRequestDto();
+        let result = new CreateStorageLocationRequestDto();
         result.init(data);
         return result;
     }
@@ -1909,34 +1909,24 @@ export class CreateStorageCaseRequestDto implements ICreateStorageCaseRequestDto
     }
 }
 
-export interface ICreateStorageCaseRequestDto {
+export interface ICreateStorageLocationRequestDto {
     name: string;
     sizeX: number;
     sizeY: number;
 }
 
-export class GetStorageCaseResponseDto implements IGetStorageCaseResponseDto {
-    id!: string;
-    name!: string;
-    size!: string;
+export class GetStorageLocationResponseDto extends GetStorageLocationsResponseDto implements IGetStorageLocationResponseDto {
     sizeX!: number;
     sizeY!: number;
     containers!: ContainerWithLocationResponseDto[];
 
-    constructor(data?: IGetStorageCaseResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+    constructor(data?: IGetStorageLocationResponseDto) {
+        super(data);
     }
 
-    init(_data?: any) {
+    override init(_data?: any) {
+        super.init(_data);
         if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
-            this.size = _data["size"] !== undefined ? _data["size"] : <any>null;
             this.sizeX = _data["sizeX"] !== undefined ? _data["sizeX"] : <any>null;
             this.sizeY = _data["sizeY"] !== undefined ? _data["sizeY"] : <any>null;
             if (Array.isArray(_data["containers"])) {
@@ -1950,18 +1940,15 @@ export class GetStorageCaseResponseDto implements IGetStorageCaseResponseDto {
         }
     }
 
-    static fromJS(data: any): GetStorageCaseResponseDto {
+    static override fromJS(data: any): GetStorageLocationResponseDto {
         data = typeof data === 'object' ? data : {};
-        let result = new GetStorageCaseResponseDto();
+        let result = new GetStorageLocationResponseDto();
         result.init(data);
         return result;
     }
 
-    toJSON(data?: any) {
+    override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
-        data["size"] = this.size !== undefined ? this.size : <any>null;
         data["sizeX"] = this.sizeX !== undefined ? this.sizeX : <any>null;
         data["sizeY"] = this.sizeY !== undefined ? this.sizeY : <any>null;
         if (Array.isArray(this.containers)) {
@@ -1969,14 +1956,12 @@ export class GetStorageCaseResponseDto implements IGetStorageCaseResponseDto {
             for (let item of this.containers)
                 data["containers"].push(item.toJSON());
         }
+        super.toJSON(data);
         return data;
     }
 }
 
-export interface IGetStorageCaseResponseDto {
-    id: string;
-    name: string;
-    size: string;
+export interface IGetStorageLocationResponseDto extends IGetStorageLocationsResponseDto {
     sizeX: number;
     sizeY: number;
     containers: ContainerWithLocationResponseDto[];

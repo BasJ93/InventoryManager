@@ -3,14 +3,14 @@ import {
   ContentsOverviewComponent
 } from "./pages/contents-overview/contents-overview.component";
 import {
-  StoragecasesOverviewComponent
-} from "./pages/storagecases-overview/storagecases-overview.component";
+  StorageLocationsOverviewComponent
+} from "./pages/storage-locations-overview/storage-locations-overview.component";
 import {
   ContainersOverviewComponent
 } from "./pages/containers-overview/containers-overview.component";
 import {
-  StoragecaseContentBuilderComponent
-} from "./pages/storagecase-content-builder/storagecase-content-builder.component";
+  StorageLocationContentBuilderComponent
+} from "./pages/storage-location-content-builder/storage-location-content-builder.component";
 import { CreateContainerComponent } from "./pages/create-container/create-container.component";
 import { CreateContentComponent } from "./pages/create-content/create-content.component";
 
@@ -19,6 +19,6 @@ export const routes: Routes = [
   {path: 'contents/new', component: CreateContentComponent},
   {path: 'containers', component: ContainersOverviewComponent},
   {path: 'containers/new', component: CreateContainerComponent},
-  {path: 'cases', component: StoragecasesOverviewComponent},
-  {path: 'cases/:id', component: StoragecaseContentBuilderComponent}
+  {path: 'locations', component: StorageLocationsOverviewComponent},
+  {path: 'locations/:id', component: StorageLocationContentBuilderComponent}
 ];

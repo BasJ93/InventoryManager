@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InventoryManager.Database.Configurations;
 
-public class CaseContainerPositionConfiguration : IEntityTypeConfiguration<CaseContainerPosition>
+public class CaseContainerPositionConfiguration : IEntityTypeConfiguration<StorageLocationContainerPosition>
 {
-    public void Configure(EntityTypeBuilder<CaseContainerPosition> builder)
+    public void Configure(EntityTypeBuilder<StorageLocationContainerPosition> builder)
     {
-        string tableName = ConfigurationHelper.ToTableName<CaseContainerPosition>(null);
+        string tableName = ConfigurationHelper.ToTableName<StorageLocationContainerPosition>(null);
 
         builder.ToTable(tableName);
         
-        builder.HasKey(x => new { x.CaseId, x.ContainerId })
+        builder.HasKey(x => new { CaseId = x.StorageLocationId, x.ContainerId })
             .HasName($"PK_{tableName}");
         
-        builder.Property(x => x.CaseId)
+        builder.Property(x => x.StorageLocationId)
             .HasColumnType(DbTypes.Guid)
             .IsRequired();
 
@@ -32,14 +32,14 @@ public class CaseContainerPositionConfiguration : IEntityTypeConfiguration<CaseC
             .HasColumnType(DbTypes.Int)
             .IsRequired();
 
-        builder.HasOne(x => x.Case)
+        builder.HasOne(x => x.Location)
             .WithMany(y => y.Containers)
-            .HasForeignKey(x => x.CaseId)
-            .HasConstraintName($"FK_{nameof(StorageCase)}_{nameof(CaseContainerPosition)}");
+            .HasForeignKey(x => x.StorageLocationId)
+            .HasConstraintName($"FK_{nameof(StorageLocation)}_{nameof(StorageLocationContainerPosition)}");
 
         builder.HasOne(x => x.Container)
             .WithOne(y => y.Position)
-            .HasForeignKey<CaseContainerPosition>(x => x.ContainerId)
-            .HasConstraintName($"FK_{nameof(Container)}_{nameof(CaseContainerPosition)}");
+            .HasForeignKey<StorageLocationContainerPosition>(x => x.ContainerId)
+            .HasConstraintName($"FK_{nameof(Container)}_{nameof(StorageLocationContainerPosition)}");
     }
 }

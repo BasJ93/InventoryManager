@@ -1,6 +1,6 @@
 namespace InventoryManager.Models;
 
-public class GetStorageCasesResponseDto
+public class GetStorageLocationsResponseDto
 {
     public Guid Id { get; set; }
 

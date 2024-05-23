@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InventoryManager.Database.Configurations;
 
-public class StorageCaseConfiguration : IEntityTypeConfiguration<StorageCase>
+public class StorageLocationConfiguration : IEntityTypeConfiguration<StorageLocation>
 {
-    public void Configure(EntityTypeBuilder<StorageCase> builder)
+    public void Configure(EntityTypeBuilder<StorageLocation> builder)
     {
-        string tableName = ConfigurationHelper.ToTableName<StorageCase>(null);
+        string tableName = ConfigurationHelper.ToTableName<StorageLocation>(null);
 
         builder.ToTable(tableName);
         

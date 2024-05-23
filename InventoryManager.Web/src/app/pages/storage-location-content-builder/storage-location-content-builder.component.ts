@@ -6,8 +6,8 @@ import { Subject } from 'rxjs';
 import {
   ContainerClient,
   ContainerWithLocationResponseDto,
-  GetStorageCaseResponseDto,
-  StorageCaseClient
+  GetStorageLocationResponseDto,
+  StorageLocationClient
 } from "../../generated/api.generated.clients";
 
 @Component({
@@ -21,51 +21,50 @@ import {
     CdkDropList,
     CdkDropListGroup,
   ],
-  templateUrl: './storagecase-content-builder.component.html',
-  styleUrl: './storagecase-content-builder.component.scss'
+  templateUrl: './storage-location-content-builder.component.html',
+  styleUrl: './storage-location-content-builder.component.scss'
 })
 
-// TODO: Update the position of a container in the backend when it has been moved.
+export class StorageLocationContentBuilderComponent implements OnInit {
 
-export class StoragecaseContentBuilderComponent implements OnInit {
-
-  constructor(private storageCaseClient: StorageCaseClient, private containerClient: ContainerClient) {
-    this.caseId$.subscribe(id => {
-      this.storageCaseClient.getCase(id)
-        .subscribe(storageCase => {
-          this.storageCase = storageCase;
-          for(let i = 0; i < storageCase.sizeX * storageCase.sizeY; i++)
+  constructor(private storageLocationClient: StorageLocationClient, private containerClient: ContainerClient) {
+    this.locationId$.subscribe(id => {
+      // TODO: Move to function
+      this.storageLocationClient.getStorageLocation(id)
+        .subscribe(storageLocation => {
+          this.storageLocation = storageLocation;
+          for(let i = 0; i < storageLocation.sizeX * storageLocation.sizeY; i++)
           {
-            let posX = i % (storageCase.sizeX);
-            let posY = Math.floor(i / storageCase.sizeX);
+            let posX = i % (storageLocation.sizeX);
+            let posY = Math.floor(i / storageLocation.sizeX);
 
             let empty = new ContainerWithLocationResponseDto();
             empty.positionX = posX + 1;
             empty.positionY = posY + 1;
 
-            this.storageCaseGrid.push(empty)
+            this.storageLocationGrid.push(empty)
           }
 
-          for(let j = 0; j < this.storageCase.containers.length; j++)
+          for(let j = 0; j < this.storageLocation.containers.length; j++)
           {
-            let position = this.calculatePosition(this.storageCase.containers[j]);//(this.storageCase.containers[j].positionX - 1) * (this.storageCase.sizeX - 1) + this.storageCase.containers[j].positionY - 1;
-            this.storageCaseGrid[position] = this.storageCase.containers[j];
+            let position = this.calculatePosition(this.storageLocation.containers[j]);//(this.storageCase.containers[j].positionX - 1) * (this.storageCase.sizeX - 1) + this.storageCase.containers[j].positionY - 1;
+            this.storageLocationGrid[position] = this.storageLocation.containers[j];
           }
         });
     });
   }
 
-  storageCase: GetStorageCaseResponseDto | null = null;
+  storageLocation: GetStorageLocationResponseDto | null = null;
 
-  storageCaseGrid: ContainerWithLocationResponseDto[] = [];
+  storageLocationGrid: ContainerWithLocationResponseDto[] = [];
 
   availableContainers: ContainerWithLocationResponseDto[] = [];
 
-  caseId$: Subject<string> = new Subject<string>;
+  locationId$: Subject<string> = new Subject<string>;
 
   @Input({ required: true })
   set id(storagecase: string) {
-    this.caseId$.next(storagecase);
+    this.locationId$.next(storagecase);
   }
 
   ngOnInit(): void {
@@ -74,10 +73,10 @@ export class StoragecaseContentBuilderComponent implements OnInit {
   }
 
   getGridStyle() {
-    if(this.storageCase !== null) {
+    if(this.storageLocation !== null) {
       let gridStyle: any = {
-        'grid-template-columns': 'repeat(' + this.storageCase.sizeX + ', 8vw)',
-        'grid-template-rows': 'repeat(' + this.storageCase.sizeY + ', 8vw)',
+        'grid-template-columns': 'repeat(' + this.storageLocation.sizeX + ', 8vw)',
+        'grid-template-rows': 'repeat(' + this.storageLocation.sizeY + ', 8vw)',
       };
 
       return gridStyle;
@@ -86,9 +85,9 @@ export class StoragecaseContentBuilderComponent implements OnInit {
   }
 
   getAvailableStyle() {
-    if(this.storageCase !== null) {
+    if(this.storageLocation !== null) {
       let gridStyle: any = {
-        'grid-template-rows': 'repeat(' + this.storageCase.sizeY + ', 8vw)',
+        'grid-template-rows': 'repeat(' + this.storageLocation.sizeY + ', 8vw)',
       };
 
       return gridStyle;
@@ -98,7 +97,7 @@ export class StoragecaseContentBuilderComponent implements OnInit {
 
   dropInCase(event: CdkDragDrop<ContainerWithLocationResponseDto>) {
 
-    if(this.storageCase !== null) {
+    if(this.storageLocation !== null) {
       const oldContainer: ContainerWithLocationResponseDto = JSON.parse(JSON.stringify(event.previousContainer.data));
       const newContainer: ContainerWithLocationResponseDto = JSON.parse(JSON.stringify(event.container.data));
 
@@ -107,28 +106,28 @@ export class StoragecaseContentBuilderComponent implements OnInit {
 
       if (Array.isArray(event.previousContainer.data)) {
         // Add the item to the grid, and remove it from the available list
-        this.storageCaseGrid[newPosition] = event.previousContainer.data[event.previousIndex];
-        this.storageCaseGrid[newPosition].positionX = newContainer.positionX;
-        this.storageCaseGrid[newPosition].positionY = newContainer.positionY;
+        this.storageLocationGrid[newPosition] = event.previousContainer.data[event.previousIndex];
+        this.storageLocationGrid[newPosition].positionX = newContainer.positionX;
+        this.storageLocationGrid[newPosition].positionY = newContainer.positionY;
         this.availableContainers.splice(event.previousIndex, 1);
       } else {
         let empty = new ContainerWithLocationResponseDto();
         empty.positionX = oldContainer.positionX;
         empty.positionY = oldContainer.positionY;
-        this.storageCaseGrid[oldPosition] = empty;
+        this.storageLocationGrid[oldPosition] = empty;
 
         // Move the piece to the new location.
-        this.storageCaseGrid[newPosition] = oldContainer;
-        this.storageCaseGrid[newPosition].positionX = newContainer.positionX;
-        this.storageCaseGrid[newPosition].positionY = newContainer.positionY;
+        this.storageLocationGrid[newPosition] = oldContainer;
+        this.storageLocationGrid[newPosition].positionX = newContainer.positionX;
+        this.storageLocationGrid[newPosition].positionY = newContainer.positionY;
       }
 
-      this.updateContainerPositionInDatabase(this.storageCaseGrid[newPosition]);
+      this.updateContainerPositionInDatabase(this.storageLocationGrid[newPosition]);
     }
   }
 
   dropInAvailable(event: CdkDragDrop<ContainerWithLocationResponseDto[], ContainerWithLocationResponseDto>) {
-    if(this.storageCase !== null) {
+    if(this.storageLocation !== null) {
       const oldContainer: ContainerWithLocationResponseDto = JSON.parse(JSON.stringify(event.previousContainer.data));
 
       const oldPosition = this.calculatePosition(oldContainer);
@@ -140,32 +139,32 @@ export class StoragecaseContentBuilderComponent implements OnInit {
       empty.positionX = oldContainer.positionX;
       empty.positionY = oldContainer.positionY;
 
-      this.storageCaseGrid[oldPosition] = empty;
+      this.storageLocationGrid[oldPosition] = empty;
     }
   }
 
   enterCasePredicate = (drag: CdkDrag, drop: CdkDropList) => {
     let position = this.calculatePosition(drop.data);
-    return this.storageCaseGrid[position].content === null || this.storageCaseGrid[position].content === undefined;
+    return this.storageLocationGrid[position].content === null || this.storageLocationGrid[position].content === undefined;
   };
 
   updateContainerPositionInDatabase(container: ContainerWithLocationResponseDto): void {
-    if(this.storageCase != null) {
-      this.storageCaseClient.putContainerInCase(this.storageCase.id, container.positionX, container.positionY, container.id)
+    if(this.storageLocation != null) {
+      this.storageLocationClient.putContainerInStorageLocation(this.storageLocation.id, container.positionX, container.positionY, container.id)
         .subscribe(x => console.log(x));
     }
   }
 
   removeContainerFromCaseInDatabase(container: ContainerWithLocationResponseDto): void {
-    if(this.storageCase != null) {
-      this.storageCaseClient.removeContainerFromCase(this.storageCase.id, container.positionX, container.positionY)
+    if(this.storageLocation != null) {
+      this.storageLocationClient.removeContainerFromStorageLocation(this.storageLocation.id, container.positionX, container.positionY)
         .subscribe(x => console.log(x));
     }
   }
 
   private calculatePosition(container: ContainerWithLocationResponseDto): number {
-    if(this.storageCase != null) {
-      return (container.positionX - 1) + (container.positionY - 1) * this.storageCase.sizeX;
+    if(this.storageLocation != null) {
+      return (container.positionX - 1) + (container.positionY - 1) * this.storageLocation.sizeX;
     }
     return -1;
   }

@@ -28,7 +28,7 @@ public static partial class ContainerMapper
     
     public static partial IQueryable<ContainerOverviewResponseDto> ProjectToDto(this IQueryable<Container> q);
 
-    [MapProperty("Position.Case" ,nameof(ContainerOverviewResponseDto.Location))]
+    [MapProperty("Position.Location" ,nameof(ContainerOverviewResponseDto.Location))]
     private static partial ContainerOverviewResponseDto Map(Container container);
 
     private static ContentResponseDto MapContentStandard(Content content)

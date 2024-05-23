@@ -1,9 +1,9 @@
 <div class="case-layout-container" cdkDropListGroup>
   <div class="row-title">
-    <H3 *ngIf="storageCase !== null">{{storageCase.name}}</H3>
+    <H3 *ngIf="storageLocation !== null">{{storageLocation.name}}</H3>
   </div>
-  <div id="case-display" class="case-display" [ngStyle]="getGridStyle()" *ngIf="storageCase !== null"> <!---->
-    <div *ngFor="let cell of storageCaseGrid; let i = index"
+  <div id="case-display" class="case-display" [ngStyle]="getGridStyle()" *ngIf="storageLocation !== null"> <!---->
+    <div *ngFor="let cell of storageLocationGrid; let i = index"
          class="cell"
          cdkDropList
          (cdkDropListDropped)="dropInCase($event)"

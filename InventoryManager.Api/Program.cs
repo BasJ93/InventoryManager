@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<InventoryManagerContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("mssql")));
 
-builder.Services.AddScoped<IStorageCaseService, StorageCaseService>();
+builder.Services.AddScoped<IStorageLocationService, StorageLocationService>();
 builder.Services.AddScoped<IContainerService, ContainerService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IStandardsService, StandardsService>();

@@ -1,6 +1,6 @@
 ﻿namespace InventoryManager.Models;
 
-public class CreateStorageCaseRequestDto
+public class CreateStorageLocationRequestDto
 {
     public string Name { get; set; } = string.Empty;
 

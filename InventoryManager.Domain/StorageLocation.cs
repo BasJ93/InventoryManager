@@ -1,6 +1,6 @@
 namespace InventoryManager.Domain;
 
-public class StorageCase
+public class StorageLocation
 {
     public Guid Id { get; set; }
 
@@ -10,5 +10,5 @@ public class StorageCase
 
     public int SizeY { get; set; }
 
-    public virtual ICollection<CaseContainerPosition> Containers { get; set; } = new HashSet<CaseContainerPosition>();
+    public virtual ICollection<StorageLocationContainerPosition> Containers { get; set; } = new HashSet<StorageLocationContainerPosition>();
 }

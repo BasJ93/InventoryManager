@@ -5,7 +5,7 @@ using InventoryManager.Reports;
 Console.WriteLine("Hello, World!");
 
 
-StorageCase storageCase = new()
+StorageLocation storageLocation = new()
 {
   Name = "Test case",
   SizeY  = 6,
@@ -80,7 +80,7 @@ Content screw5X80 = new()
   Length = "80"
 };
 
-CaseContainerPosition position1 = new()
+StorageLocationContainerPosition position1 = new()
 {
   PositionX = 1,
   PositionY = 1,
@@ -95,9 +95,9 @@ Container container1 = new()
 
 position1.Container = container1;
 
-storageCase.Containers.Add(position1);
+storageLocation.Containers.Add(position1);
 
-CaseContainerPosition position2 = new()
+StorageLocationContainerPosition position2 = new()
 {
   PositionX = 7,
   PositionY = 6,
@@ -112,9 +112,9 @@ Container container2 = new()
 
 position2.Container = container2;
 
-storageCase.Containers.Add(position2);
+storageLocation.Containers.Add(position2);
 
-CaseContainerPosition position3 = new()
+StorageLocationContainerPosition position3 = new()
 {
   PositionX = 4,
   PositionY = 3,
@@ -129,9 +129,9 @@ Container container3 = new()
 
 position3.Container = container3;
 
-storageCase.Containers.Add(position3);
+storageLocation.Containers.Add(position3);
 
-CaseContainerPosition position4 = new()
+StorageLocationContainerPosition position4 = new()
 {
   PositionX = 1,
   PositionY = 2,
@@ -146,9 +146,9 @@ Container container4 = new()
 
 position4.Container = container4;
 
-storageCase.Containers.Add(position4);
+storageLocation.Containers.Add(position4);
 
-CaseContainerPosition position5 = new()
+StorageLocationContainerPosition position5 = new()
 {
   PositionX = 1,
   PositionY = 3,
@@ -163,9 +163,9 @@ Container container5 = new()
 
 position5.Container = container5;
 
-storageCase.Containers.Add(position5);
+storageLocation.Containers.Add(position5);
 
-CaseContainerPosition position6 = new()
+StorageLocationContainerPosition position6 = new()
 {
   PositionX = 1,
   PositionY = 4,
@@ -180,12 +180,12 @@ Container container6 = new()
 
 position6.Container = container6;
 
-storageCase.Containers.Add(position6);
+storageLocation.Containers.Add(position6);
 
 
 ReportGenerator reportGenerator = new();
 
-using (MemoryStream caseLidSheet = reportGenerator.GenerateCaseLidSheet(storageCase))
+using (MemoryStream caseLidSheet = reportGenerator.GenerateCaseLidSheet(storageLocation))
 {
   caseLidSheet.Position = 0;
 
@@ -193,7 +193,7 @@ using (MemoryStream caseLidSheet = reportGenerator.GenerateCaseLidSheet(storageC
   caseLidSheet.CopyTo(lidSheetPdf);
 }
 
-using (MemoryStream labelsSheet = reportGenerator.GenerateContainerLabelsSheet(storageCase))
+using (MemoryStream labelsSheet = reportGenerator.GenerateContainerLabelsSheet(storageLocation))
 {
   labelsSheet.Position = 0;
   
