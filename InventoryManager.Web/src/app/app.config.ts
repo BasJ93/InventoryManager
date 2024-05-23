@@ -7,7 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {
   API_BASE_URL,
   ContainerClient,
-  StorageCaseClient,
+  StorageLocationClient,
   ContentClient,
   StandardClient
 } from "./generated/api.generated.clients";
@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     { provide: API_BASE_URL, useValue: environment.basePath },
     { provide: ContainerClient },
-    { provide: StorageCaseClient },
+    { provide: StorageLocationClient },
     { provide: ContentClient },
     { provide: StandardClient}
   ]

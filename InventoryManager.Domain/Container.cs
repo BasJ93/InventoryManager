@@ -10,7 +10,7 @@ public class Container
 
     public Guid? ContentId { get; set; } = Guid.Empty;
     
-    public virtual CaseContainerPosition? Position { get; set; } = null!;
+    public virtual StorageLocationContainerPosition? Position { get; set; } = null!;
 
     public virtual Content? Content { get; set; } = null!;
     

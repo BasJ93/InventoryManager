@@ -13,5 +13,5 @@ import { NavigationComponentComponent } from "./navigation-component/navigation-
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'InventoryManager.Web';
+  title = 'InventoryManager';
 }

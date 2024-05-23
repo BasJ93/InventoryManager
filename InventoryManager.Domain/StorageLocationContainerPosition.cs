@@ -1,8 +1,8 @@
 namespace InventoryManager.Domain;
 
-public class CaseContainerPosition
+public class StorageLocationContainerPosition
 {
-    public Guid CaseId { get; set; }
+    public Guid StorageLocationId { get; set; }
 
     public Guid ContainerId { get; set; }
 
@@ -10,7 +10,7 @@ public class CaseContainerPosition
 
     public int PositionY { get; set; }
 
-    public StorageCase Case { get; set; } = null!;
+    public StorageLocation Location { get; set; } = null!;
 
     public Container Container { get; set; } = null!;
 }

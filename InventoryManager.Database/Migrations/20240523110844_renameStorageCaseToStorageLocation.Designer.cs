@@ -4,6 +4,7 @@ using InventoryManager.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryManager.Database.Migrations
 {
     [DbContext(typeof(InventoryManagerContext))]
-    partial class InventoryManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240523110844_renameStorageCaseToStorageLocation")]
+    partial class renameStorageCaseToStorageLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,9 +116,6 @@ namespace InventoryManager.Database.Migrations
                         .HasColumnType("INT");
 
                     b.Property<int>("SizeY")
-                        .HasColumnType("INT");
-
-                    b.Property<int>("Type")
                         .HasColumnType("INT");
 
                     b.HasKey("Id")

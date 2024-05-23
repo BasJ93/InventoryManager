@@ -4,9 +4,9 @@ namespace InventoryManager.Reports;
 
 public interface IReportGenerator
 {
-    MemoryStream GenerateCaseLidSheet(StorageCase storageCase);
+    MemoryStream GenerateCaseLidSheet(StorageLocation storageLocation);
     
-    MemoryStream GenerateContainerLabelsSheet(StorageCase storageCase);
+    MemoryStream GenerateContainerLabelsSheet(StorageLocation storageLocation);
 
     MemoryStream GenerateContainerLabelsSheet(ICollection<Container> storageContainers);
 }

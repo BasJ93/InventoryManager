@@ -1,0 +1,14 @@
+<mat-toolbar color="secondary">
+  <span>Locations</span>
+</mat-toolbar>
+
+<mat-list role="list">
+  <mat-list-item *ngFor="let storageLocation of storageLocations">
+    <div class="case-list-item">
+    <a [routerLink]="storageLocation.id">{{storageLocation.name}}</a>
+    {{storageLocation.type}}
+    <mat-icon fontIcon="print" (click)="generateLid(storageLocation.id)" ></mat-icon>
+    <mat-icon fontIcon="label" (click)="generateLabels(storageLocation.id)"></mat-icon>
+    </div>
+  </mat-list-item>
+</mat-list>

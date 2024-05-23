@@ -27,7 +27,7 @@ public class ContainerService : IContainerService
             .Include(x => x.Content)
             .ThenInclude(c => c.Standard)
             .Include(x => x.Position)
-            .ThenInclude(p => p.Case)
+            .ThenInclude(p => p.Location)
             .ProjectToDto()
             .ToListAsync(ctx);
     }

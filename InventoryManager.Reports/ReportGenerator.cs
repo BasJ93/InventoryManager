@@ -13,7 +13,7 @@ public class ReportGenerator : IReportGenerator
     }
 
     /// <inheritdoc />
-    public MemoryStream GenerateCaseLidSheet(StorageCase storageCase)
+    public MemoryStream GenerateCaseLidSheet(StorageLocation storageLocation)
     {
         MemoryStream result = new MemoryStream();
         
@@ -21,8 +21,8 @@ public class ReportGenerator : IReportGenerator
         PageSize pageSize = PageSizes.A4.Landscape();
 
         // Case contains 6x7 containers max
-        int caseContainerCountHorizontal = storageCase.SizeX;
-        int caseContainerCountVertical = storageCase.SizeY;
+        int caseContainerCountHorizontal = storageLocation.SizeX;
+        int caseContainerCountVertical = storageLocation.SizeY;
         float caseColumnWidth = Convert.ToSingle(Math.Floor(pageSize.Width / caseContainerCountHorizontal));
         float caseRowHeight = Convert.ToSingle(Math.Floor(pageSize.Height / caseContainerCountVertical));
 
@@ -52,7 +52,7 @@ public class ReportGenerator : IReportGenerator
                             }
                         });
 
-                        List<int> existingRows = storageCase.Containers.Select(c => c.PositionY).Distinct().ToList();
+                        List<int> existingRows = storageLocation.Containers.Select(c => c.PositionY).Distinct().ToList();
 
                         if (existingRows.Count < caseContainerCountVertical)
                         {
@@ -69,7 +69,7 @@ public class ReportGenerator : IReportGenerator
                             }
                         }
 
-                        foreach (CaseContainerPosition containerPosition in storageCase.Containers)
+                        foreach (StorageLocationContainerPosition containerPosition in storageLocation.Containers)
                         {
                             table.Cell()
                                 .Column(Convert.ToUInt32(containerPosition.PositionX))
@@ -87,7 +87,7 @@ public class ReportGenerator : IReportGenerator
     }
 
     /// <inheritdoc />
-    public MemoryStream GenerateContainerLabelsSheet(StorageCase storageCase)
+    public MemoryStream GenerateContainerLabelsSheet(StorageLocation storageLocation)
     {
         MemoryStream result = new MemoryStream();
         
@@ -121,7 +121,7 @@ public class ReportGenerator : IReportGenerator
                             }
                         });
 
-                        foreach (CaseContainerPosition containerPosition in storageCase.Containers)
+                        foreach (StorageLocationContainerPosition containerPosition in storageLocation.Containers)
                         {
                             table.Cell()
                                 .LabelCell(containerPosition.Container);

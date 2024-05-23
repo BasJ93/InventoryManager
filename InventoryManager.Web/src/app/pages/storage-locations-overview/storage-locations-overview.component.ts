@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { saveAs } from 'file-saver';
-import { GetStorageCasesResponseDto, StorageCaseClient } from "../../generated/api.generated.clients";
+import { GetStorageLocationsResponseDto, StorageLocationClient } from "../../generated/api.generated.clients";
 
 @Component({
   selector: 'app-storagecases-overview',
@@ -17,29 +17,29 @@ import { GetStorageCasesResponseDto, StorageCaseClient } from "../../generated/a
     MatIconModule,
     MatToolbarModule
   ],
-  templateUrl: './storagecases-overview.component.html',
-  styleUrl: './storagecases-overview.component.scss'
+  templateUrl: './storage-locations-overview.component.html',
+  styleUrl: './storage-locations-overview.component.scss'
 })
-export class StoragecasesOverviewComponent implements OnInit {
-  constructor(private storageCaseClient: StorageCaseClient) {
+export class StorageLocationsOverviewComponent implements OnInit {
+  constructor(private storageLocationClient: StorageLocationClient) {
   }
 
-  storageCases: GetStorageCasesResponseDto[] = [];
+  storageLocations: GetStorageLocationsResponseDto[] = [];
 
   ngOnInit(): void {
-    this.storageCaseClient.getCases()
-      .subscribe(x => this.storageCases = x);
+    this.storageLocationClient.getStorageLocations()
+      .subscribe(x => this.storageLocations = x);
   }
 
   generateLid(caseId: string): void {
-    this.storageCaseClient.getLidInsertForCase(caseId)
+    this.storageLocationClient.getLidInsertForStorageLocation(caseId)
       .subscribe(x => {
         saveAs(x.data, x.fileName)
       });
   }
 
   generateLabels(caseId: string): void {
-    this.storageCaseClient.getLabelsForCase(caseId)
+    this.storageLocationClient.getLabelsForStorageLocation(caseId)
       .subscribe(x => {
         saveAs(x.data, x.fileName)
       });

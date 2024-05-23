@@ -7,27 +7,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManager.Api.Services;
 
-public class StorageCaseService : IStorageCaseService
+public class StorageLocationService : IStorageLocationService
 {
-    private readonly ILogger<StorageCaseService> _logger;
+    private readonly ILogger<StorageLocationService> _logger;
     private readonly InventoryManagerContext _db;
     private readonly IReportGenerator _reportGenerator;
     
-    public StorageCaseService(ILogger<StorageCaseService> logger, InventoryManagerContext db, IReportGenerator reportGenerator)
+    public StorageLocationService(ILogger<StorageLocationService> logger, InventoryManagerContext db, IReportGenerator reportGenerator)
     {
         _logger = logger;
         _db = db;
         _reportGenerator = reportGenerator;
     }
 
-    public async Task<List<GetStorageCasesResponseDto>> GetStorageCases(CancellationToken ctx = default)
+    public async Task<List<GetStorageLocationsResponseDto>> GetStorageLocations(CancellationToken ctx = default)
     {
-        return await _db.StorageCases.Select(x => StorageCaseMapper.ToGetStorageCasesResponseDto(x)).ToListAsync(ctx);
+        return await _db.StorageCases.Select(x => StorageCaseMapper.ToGetStorageLocationsResponseDto(x)).ToListAsync(ctx);
     }
 
-    public async Task<GetStorageCaseResponseDto?> GetStorageCase(Guid id, CancellationToken ctx = default)
+    public async Task<GetStorageLocationResponseDto?> GetStorageLocation(Guid id, CancellationToken ctx = default)
     {
-        StorageCase? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+        StorageLocation? storageCase = await _db.StorageCases.Where(x => x.Id == id)
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
@@ -39,10 +39,10 @@ public class StorageCaseService : IStorageCaseService
             return null;
         }
         
-        return StorageCaseMapper.ToGetStorageCaseReponseDto(storageCase);
+        return StorageCaseMapper.ToGetStorageLocationReponseDto(storageCase);
     }
 
-    public async Task<bool> PlaceContainerInStorageCase(Guid id, int x, int y, Guid containerId, CancellationToken ctx = default)
+    public async Task<bool> PlaceContainerInStorageLocation(Guid id, int x, int y, Guid containerId, CancellationToken ctx = default)
     {
         Container? container = await _db.Containers.FirstOrDefaultAsync(o => o.Id == containerId, ctx);
 
@@ -51,14 +51,14 @@ public class StorageCaseService : IStorageCaseService
             return false;
         }
 
-        StorageCase? storageCase = await _db.StorageCases.Where(o => o.Id == id).Include(o => o.Containers).FirstOrDefaultAsync(ctx);
+        StorageLocation? storageCase = await _db.StorageCases.Where(o => o.Id == id).Include(o => o.Containers).FirstOrDefaultAsync(ctx);
 
         if (storageCase == default)
         {
             return false;
         }
 
-        CaseContainerPosition? existingPosition = storageCase.Containers.FirstOrDefault(o => o.ContainerId == container.Id);
+        StorageLocationContainerPosition? existingPosition = storageCase.Containers.FirstOrDefault(o => o.ContainerId == container.Id);
 
         if (existingPosition != null)
         {
@@ -76,8 +76,8 @@ public class StorageCaseService : IStorageCaseService
             
             storageCase.Containers.Add(new()
             {
-                Case = storageCase,
-                CaseId = storageCase.Id,
+                Location = storageCase,
+                StorageLocationId = storageCase.Id,
                 Container = container,
                 ContainerId = containerId,
                 PositionX = x,
@@ -92,16 +92,16 @@ public class StorageCaseService : IStorageCaseService
         return false;
     }
 
-    public async Task<bool> RemoveContainerFromStorageCase(Guid id, int x, int y, CancellationToken ctx = default)
+    public async Task<bool> RemoveContainerFromStorageLocation(Guid id, int x, int y, CancellationToken ctx = default)
     {
-        StorageCase? storageCase = await _db.StorageCases.Where(o => o.Id == id).Include(o => o.Containers).FirstOrDefaultAsync(ctx);
+        StorageLocation? storageCase = await _db.StorageCases.Where(o => o.Id == id).Include(o => o.Containers).FirstOrDefaultAsync(ctx);
 
         if (storageCase == default)
         {
             return false;
         }
         
-        CaseContainerPosition? existingPosition = storageCase.Containers.FirstOrDefault(o => o.PositionX == x && o.PositionY == y);
+        StorageLocationContainerPosition? existingPosition = storageCase.Containers.FirstOrDefault(o => o.PositionX == x && o.PositionY == y);
 
         if (existingPosition != null)
         {
@@ -117,7 +117,7 @@ public class StorageCaseService : IStorageCaseService
 
     public async Task<(MemoryStream?, string?)> GenerateLabelsPdf(Guid id, CancellationToken ctx = default)
     {
-        StorageCase? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+        StorageLocation? storageCase = await _db.StorageCases.Where(x => x.Id == id)
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
@@ -138,7 +138,7 @@ public class StorageCaseService : IStorageCaseService
 
     public async Task<(MemoryStream?, string?)> GenerateLidPdf(Guid id, CancellationToken ctx = default)
     {
-        StorageCase? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+        StorageLocation? storageCase = await _db.StorageCases.Where(x => x.Id == id)
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
@@ -157,18 +157,18 @@ public class StorageCaseService : IStorageCaseService
         return (lidSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageCase.Name}-lid.pdf");
     }
 
-    public async Task<string> GetStorageCaseName(Guid id, CancellationToken ctx = default)
+    public async Task<string> GetStorageLocationName(Guid id, CancellationToken ctx = default)
     {
         string? name = await _db.StorageCases.Where(x => x.Id == id).Select(x => x.Name).FirstOrDefaultAsync(ctx);
 
         return name ?? string.Empty;
     }
 
-    public async Task<Guid> CreateStorageCase(CreateStorageCaseRequestDto requestDto, CancellationToken ctx = default)
+    public async Task<Guid> CreateStorageLocation(CreateStorageLocationRequestDto requestDto, CancellationToken ctx = default)
     {
-        _logger.LogInformation("Creating new storage case [{name}]", requestDto.Name);
+        _logger.LogInformation("Creating new storage location [{name}]", requestDto.Name);
         
-        StorageCase newCase = new()
+        StorageLocation newLocation = new()
         {
             Name = requestDto.Name,
             SizeX = requestDto.SizeX,
@@ -177,14 +177,14 @@ public class StorageCaseService : IStorageCaseService
 
         try
         {
-            await _db.StorageCases.AddAsync(newCase, ctx);
+            await _db.StorageCases.AddAsync(newLocation, ctx);
             await _db.SaveChangesAsync(ctx);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during storage case creation.");
+            _logger.LogError(ex, "Error during storage location creation.");
         }
 
-        return newCase.Id;
+        return newLocation.Id;
     }
 }
