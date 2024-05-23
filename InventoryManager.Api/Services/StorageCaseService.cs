@@ -11,9 +11,9 @@ public class StorageCaseService : IStorageCaseService
 {
     private readonly ILogger<StorageCaseService> _logger;
     private readonly InventoryManagerContext _db;
-    private readonly ReportGenerator _reportGenerator;
+    private readonly IReportGenerator _reportGenerator;
     
-    public StorageCaseService(ILogger<StorageCaseService> logger, InventoryManagerContext db, ReportGenerator reportGenerator)
+    public StorageCaseService(ILogger<StorageCaseService> logger, InventoryManagerContext db, IReportGenerator reportGenerator)
     {
         _logger = logger;
         _db = db;

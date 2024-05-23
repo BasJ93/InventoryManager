@@ -5,13 +5,14 @@ using QuestPDF.Infrastructure;
 
 namespace InventoryManager.Reports;
 
-public class ReportGenerator
+public class ReportGenerator : IReportGenerator
 {
     public ReportGenerator()
     {
         QuestPDF.Settings.License = LicenseType.Community;
     }
-    
+
+    /// <inheritdoc />
     public MemoryStream GenerateCaseLidSheet(StorageCase storageCase)
     {
         MemoryStream result = new MemoryStream();
@@ -84,7 +85,8 @@ public class ReportGenerator
 
         return result;
     }
-    
+
+    /// <inheritdoc />
     public MemoryStream GenerateContainerLabelsSheet(StorageCase storageCase)
     {
         MemoryStream result = new MemoryStream();
@@ -128,6 +130,54 @@ public class ReportGenerator
             });
         })
         .GeneratePdf(result);
+
+        return result;
+    }
+
+    /// <inheritdoc />
+    public MemoryStream GenerateContainerLabelsSheet(ICollection<Container> storageContainers)
+    {
+        MemoryStream result = new MemoryStream();
+        
+        // Page dimensions can be retrieved with PageSizes.A4.Width
+        PageSize pageSize = PageSizes.A4;
+
+        // Container label generation
+        int columnCount = 210 / 19;
+        int rowCount = 297 / 9;
+        
+        CellExtensions.SetLabelHeight(9, Unit.Millimetre);
+        
+        Document.Create(container =>
+            {
+                // Labels page
+                container.Page(page =>
+                {
+                    page.Size(pageSize);
+                    page.Margin(0);
+                    page.MarginHorizontal(0.5f, Unit.Millimetre);
+                    page.PageColor(Colors.White);
+            
+                    page.Content()
+                        .Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                for(int i = 0; i < columnCount; i++)
+                                {
+                                    columns.ConstantColumn(19, Unit.Millimetre);
+                                }
+                            });
+
+                            foreach (Container storageContainer in storageContainers)
+                            {
+                                table.Cell()
+                                    .LabelCell(storageContainer);
+                            }
+                        });
+                });
+            })
+            .GeneratePdf(result);
 
         return result;
     }
