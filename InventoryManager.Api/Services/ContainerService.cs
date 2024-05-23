@@ -3,6 +3,7 @@ using InventoryManager.Database;
 using InventoryManager.Domain;
 using InventoryManager.Domain.Enums;
 using InventoryManager.Models;
+using InventoryManager.Reports;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManager.Api.Services;
@@ -11,11 +12,13 @@ public class ContainerService : IContainerService
 {
     private readonly ILogger<ContainerService> _logger;
     private readonly InventoryManagerContext _db;
+    private readonly IReportGenerator _reportGenerator;
 
-    public ContainerService(ILogger<ContainerService> logger, InventoryManagerContext db)
+    public ContainerService(ILogger<ContainerService> logger, InventoryManagerContext db, IReportGenerator reportGenerator)
     {
         _logger = logger;
         _db = db;
+        _reportGenerator = reportGenerator;
     }
 
     public async Task<List<ContainerOverviewResponseDto>> GetAllContainers(CancellationToken ctx = default)
@@ -84,5 +87,23 @@ public class ContainerService : IContainerService
         }
 
         return newContainer.Id;
+    }
+
+    public async Task<(MemoryStream?, string?)> GetContainerLabels(CancellationToken ctx = default)
+    {
+        List<Container> containers = await _db.Containers.Include(z => z.Content)
+            .ThenInclude(c => c.Standard)
+            .ToListAsync(ctx);
+
+        if (!containers.Any())
+        {
+            return (null, null);
+        }
+        
+        MemoryStream labelsSheet = _reportGenerator.GenerateContainerLabelsSheet(containers);
+
+        labelsSheet.Position = 0;
+
+        return (labelsSheet, $"{DateTime.Now:yyyy-MM-dd}-labels.pdf");
     }
 }

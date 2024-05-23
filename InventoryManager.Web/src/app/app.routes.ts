@@ -1,24 +1,24 @@
 import { Routes } from '@angular/router';
 import {
-  ContentsOverviewComponentComponent
-} from "./contents-overview-component/contents-overview-component.component";
+  ContentsOverviewComponent
+} from "./pages/contents-overview/contents-overview.component";
 import {
-  StoragecasesOverviewComponentComponent
-} from "./storagecases-overview-component/storagecases-overview-component.component";
+  StoragecasesOverviewComponent
+} from "./pages/storagecases-overview/storagecases-overview.component";
 import {
-  ContainersOverviewComponentComponent
-} from "./containers-overview-component/containers-overview-component.component";
+  ContainersOverviewComponent
+} from "./pages/containers-overview/containers-overview.component";
 import {
   StoragecaseContentBuilderComponent
-} from "./storagecase-content-builder/storagecase-content-builder.component";
-import { CreateContainerComponentComponent } from "./create-container-component/create-container-component.component";
-import { CreateContentComponent } from "./create-content/create-content.component";
+} from "./pages/storagecase-content-builder/storagecase-content-builder.component";
+import { CreateContainerComponent } from "./pages/create-container/create-container.component";
+import { CreateContentComponent } from "./pages/create-content/create-content.component";
 
 export const routes: Routes = [
-  { path: 'contents', component: ContentsOverviewComponentComponent },
-  { path: 'contents/new', component: CreateContentComponent},
-  { path: 'containers', component: ContainersOverviewComponentComponent },
-  { path: 'containers/new', component: CreateContainerComponentComponent},
-  { path: 'cases', component: StoragecasesOverviewComponentComponent },
-  { path: 'cases/:id', component: StoragecaseContentBuilderComponent}
+  {path: 'contents', component: ContentsOverviewComponent},
+  {path: 'contents/new', component: CreateContentComponent},
+  {path: 'containers', component: ContainersOverviewComponent},
+  {path: 'containers/new', component: CreateContainerComponent},
+  {path: 'cases', component: StoragecasesOverviewComponent},
+  {path: 'cases/:id', component: StoragecaseContentBuilderComponent}
 ];

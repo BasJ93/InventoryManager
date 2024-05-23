@@ -8,7 +8,7 @@ import {
   ContainerWithLocationResponseDto,
   GetStorageCaseResponseDto,
   StorageCaseClient
-} from "../generated/api.generated.clients";
+} from "../../generated/api.generated.clients";
 
 @Component({
   selector: 'app-storagecase-content-builder',

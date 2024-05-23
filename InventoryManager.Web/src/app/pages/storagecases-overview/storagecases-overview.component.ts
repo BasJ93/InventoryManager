@@ -3,22 +3,24 @@ import { NgFor } from '@angular/common';
 import { RouterLink } from '@angular/router'
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { saveAs } from 'file-saver';
-import { GetStorageCasesResponseDto, StorageCaseClient } from "../generated/api.generated.clients";
+import { GetStorageCasesResponseDto, StorageCaseClient } from "../../generated/api.generated.clients";
 
 @Component({
-  selector: 'app-storagecases-overview-component',
+  selector: 'app-storagecases-overview',
   standalone: true,
   imports: [
     NgFor,
     RouterLink,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatToolbarModule
   ],
-  templateUrl: './storagecases-overview-component.component.html',
-  styleUrl: './storagecases-overview-component.component.scss'
+  templateUrl: './storagecases-overview.component.html',
+  styleUrl: './storagecases-overview.component.scss'
 })
-export class StoragecasesOverviewComponentComponent implements OnInit {
+export class StoragecasesOverviewComponent implements OnInit {
   constructor(private storageCaseClient: StorageCaseClient) {
   }
 

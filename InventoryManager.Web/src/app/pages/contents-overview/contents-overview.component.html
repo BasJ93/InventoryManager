@@ -1,7 +1,6 @@
-<!--<li>
-  <ul *ngFor="let content of contents">{{content.standard}} {{content.definition}}</ul>
-</li>-->
-
+<mat-toolbar color="secondary">
+  <span>Contents</span>
+</mat-toolbar>
 
 <table mat-table [dataSource]="contents" matSort #contentTblSort="matSort">
   <ng-container [matColumnDef]="column" *ngFor="let column of tableColumns">

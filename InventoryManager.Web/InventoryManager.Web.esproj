@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="src\app\generated" />
+    <Folder Include="src\app\pages" />
   </ItemGroup>
 </Project>
 

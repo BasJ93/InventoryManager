@@ -11,7 +11,7 @@ import {
   StandardClient,
   CreateContentRequestDto,
   StandardResponseDto
-} from "../generated/api.generated.clients";
+} from "../../generated/api.generated.clients";
 
 @Component({
   selector: 'app-create-content',

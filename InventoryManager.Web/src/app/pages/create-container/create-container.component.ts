@@ -11,7 +11,7 @@ import {
   ContainerSizeDto,
   ContentClient,
   ContentResponseDto, CreateContainerRequestDto
-} from "../generated/api.generated.clients";
+} from "../../generated/api.generated.clients";
 
 
 @Component({
@@ -26,10 +26,10 @@ import {
     MatCheckboxModule,
     AsyncPipe
   ],
-  templateUrl: './create-container-component.component.html',
-  styleUrl: './create-container-component.component.scss'
+  templateUrl: './create-container.component.html',
+  styleUrl: './create-container.component.scss'
 })
-export class CreateContainerComponentComponent {
+export class CreateContainerComponent {
   constructor(private containerClient: ContainerClient, private contentClient: ContentClient) {
     this.loadContents(true);
 

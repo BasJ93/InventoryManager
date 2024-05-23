@@ -13,4 +13,6 @@ public interface IContainerService
     Task<ContainerResponseDto?> GetContainer(Guid id, CancellationToken ctx = default);
 
     Task<Guid> CreateContainer(CreateContainerRequestDto requestDto, CancellationToken ctx = default);
+
+    Task<(MemoryStream?, string?)> GetContainerLabels(CancellationToken ctx = default);
 }

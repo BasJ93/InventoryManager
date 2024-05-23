@@ -71,4 +71,23 @@ public class ContainerController : ControllerBase
     {
         return Ok(_containerService.GetContainerSizes());
     }
+
+    [HttpPost("labels")]
+    [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLabelsForContainers(CancellationToken ctx = default)
+    {
+        (MemoryStream? labelsPdf, string? fileName) = await _containerService.GetContainerLabels(ctx);
+        
+        if (labelsPdf == default)
+        {
+            return NotFound();
+        }
+        
+        FileStreamResult fileStreamResult = new FileStreamResult(labelsPdf, "application/pdf")
+        {
+            FileDownloadName = fileName,
+        };
+
+        return fileStreamResult;
+    }
 }
