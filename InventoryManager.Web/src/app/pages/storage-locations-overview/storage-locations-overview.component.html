@@ -2,13 +2,21 @@
   <span>Locations</span>
 </mat-toolbar>
 
-<mat-list role="list">
-  <mat-list-item *ngFor="let storageLocation of storageLocations">
-    <div class="case-list-item">
-    <a [routerLink]="storageLocation.id">{{storageLocation.name}}</a>
-    {{storageLocation.type}}
-    <mat-icon fontIcon="print" (click)="generateLid(storageLocation.id)" ></mat-icon>
-    <mat-icon fontIcon="label" (click)="generateLabels(storageLocation.id)"></mat-icon>
-    </div>
-  </mat-list-item>
-</mat-list>
+<table mat-table [dataSource]="storageLocations" > <!-- matSort #contentTblSort="matSort" -->
+  <ng-container [matColumnDef]="column" *ngFor="let column of automaticTableColumns">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column |titlecase}}</th>
+    <td mat-cell *matCellDef="let content">{{content[column]}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+    <td mat-cell *matCellDef="let storageLocation">
+      <mat-icon fontIcon="build" (click)="configureLocation(storageLocation.id)"></mat-icon>
+      <mat-icon fontIcon="print" (click)="generateLid(storageLocation.id)" ></mat-icon>
+      <mat-icon fontIcon="label" (click)="generateLabels(storageLocation.id)"></mat-icon>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
+</table>
