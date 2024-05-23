@@ -24,11 +24,11 @@ export class StorageLocationsOverviewComponent implements OnInit {
   constructor(private storageLocationClient: StorageLocationClient) {
   }
 
-  storageCases: GetStorageLocationsResponseDto[] = [];
+  storageLocations: GetStorageLocationsResponseDto[] = [];
 
   ngOnInit(): void {
     this.storageLocationClient.getStorageLocations()
-      .subscribe(x => this.storageCases = x);
+      .subscribe(x => this.storageLocations = x);
   }
 
   generateLid(caseId: string): void {

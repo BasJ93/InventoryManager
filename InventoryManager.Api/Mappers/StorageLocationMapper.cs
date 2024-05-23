@@ -1,4 +1,5 @@
 using InventoryManager.Domain;
+using InventoryManager.Domain.Enums;
 using InventoryManager.Models;
 using Riok.Mapperly.Abstractions;
 
@@ -15,6 +16,8 @@ public static partial class StorageCaseMapper
 
         dto.Size = $"{storageLocation.SizeX}x{storageLocation.SizeY}";
 
+        dto.Type = Enum.GetName(typeof(StorageLocationType), storageLocation.Type) ?? string.Empty;
+
         return dto;
     }
     
@@ -26,6 +29,8 @@ public static partial class StorageCaseMapper
         GetStorageLocationResponseDto dto = MapGetStorageLocationResponseDto(storageLocation);
         
         dto.Size = $"{storageLocation.SizeX}x{storageLocation.SizeY}";
+        
+        dto.Type = Enum.GetName(typeof(StorageLocationType), storageLocation.Type) ?? string.Empty;
 
         dto.Containers = storageLocation.Containers.Select(x => x.Container).Select(ContainerMapper.ContainerToResponseWithLocationDto).ToList();
 

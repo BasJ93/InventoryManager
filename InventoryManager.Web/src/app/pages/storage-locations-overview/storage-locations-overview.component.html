@@ -3,11 +3,12 @@
 </mat-toolbar>
 
 <mat-list role="list">
-  <mat-list-item *ngFor="let storageCase of storageCases">
+  <mat-list-item *ngFor="let storageLocation of storageLocations">
     <div class="case-list-item">
-    <a [routerLink]="storageCase.id">{{storageCase.name}}</a>
-    <mat-icon fontIcon="print" (click)="generateLid(storageCase.id)" ></mat-icon>
-    <mat-icon fontIcon="label" (click)="generateLabels(storageCase.id)"></mat-icon>
+    <a [routerLink]="storageLocation.id">{{storageLocation.name}}</a>
+    {{storageLocation.type}}
+    <mat-icon fontIcon="print" (click)="generateLid(storageLocation.id)" ></mat-icon>
+    <mat-icon fontIcon="label" (click)="generateLabels(storageLocation.id)"></mat-icon>
     </div>
   </mat-list-item>
 </mat-list>

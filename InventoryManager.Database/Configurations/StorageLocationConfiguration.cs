@@ -34,5 +34,8 @@ public class StorageLocationConfiguration : IEntityTypeConfiguration<StorageLoca
             .HasColumnType(DbTypes.Int)
             .IsRequired();
 
+        builder.Property(x => x.Type)
+            .HasColumnType(DbTypes.Int)
+            .IsRequired();
     }
 }

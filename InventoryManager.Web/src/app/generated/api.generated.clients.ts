@@ -1395,6 +1395,7 @@ export class GetStorageLocationsResponseDto implements IGetStorageLocationsRespo
     id!: string;
     name!: string;
     size!: string;
+    type!: string;
 
     constructor(data?: IGetStorageLocationsResponseDto) {
         if (data) {
@@ -1410,6 +1411,7 @@ export class GetStorageLocationsResponseDto implements IGetStorageLocationsRespo
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.size = _data["size"] !== undefined ? _data["size"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
         }
     }
 
@@ -1425,6 +1427,7 @@ export class GetStorageLocationsResponseDto implements IGetStorageLocationsRespo
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
         data["size"] = this.size !== undefined ? this.size : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
         return data;
     }
 }
@@ -1433,6 +1436,7 @@ export interface IGetStorageLocationsResponseDto {
     id: string;
     name: string;
     size: string;
+    type: string;
 }
 
 export class ContentResponseDto implements IContentResponseDto {
