@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common';
-import { RouterLink } from '@angular/router'
+import { NgFor, TitleCasePipe } from '@angular/common';
+import { RouterLink, Router } from '@angular/router'
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule, MatTableDataSource } from "@angular/material/table"
 import { saveAs } from 'file-saver';
-import { GetStorageLocationsResponseDto, StorageLocationClient } from "../../generated/api.generated.clients";
+import {
+  GetStorageLocationsResponseDto,
+  StorageLocationClient
+} from "../../generated/api.generated.clients";
 
 @Component({
   selector: 'app-storagecases-overview',
@@ -15,33 +19,43 @@ import { GetStorageLocationsResponseDto, StorageLocationClient } from "../../gen
     RouterLink,
     MatListModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatTableModule,
+    TitleCasePipe
   ],
   templateUrl: './storage-locations-overview.component.html',
   styleUrl: './storage-locations-overview.component.scss'
 })
 export class StorageLocationsOverviewComponent implements OnInit {
-  constructor(private storageLocationClient: StorageLocationClient) {
+  constructor(private storageLocationClient: StorageLocationClient, private router: Router) {
   }
 
-  storageLocations: GetStorageLocationsResponseDto[] = [];
+  storageLocations: MatTableDataSource<GetStorageLocationsResponseDto> = new MatTableDataSource<GetStorageLocationsResponseDto>();
+
+  automaticTableColumns: string[] = ['name', 'type']
+
+  tableColumns: string[] = this.automaticTableColumns.concat(['actions']);
 
   ngOnInit(): void {
     this.storageLocationClient.getStorageLocations()
-      .subscribe(x => this.storageLocations = x);
+      .subscribe(x => this.storageLocations.data = x);
   }
 
-  generateLid(caseId: string): void {
-    this.storageLocationClient.getLidInsertForStorageLocation(caseId)
+  generateLid(locationId: string): void {
+    this.storageLocationClient.getLidInsertForStorageLocation(locationId)
       .subscribe(x => {
         saveAs(x.data, x.fileName)
       });
   }
 
-  generateLabels(caseId: string): void {
-    this.storageLocationClient.getLabelsForStorageLocation(caseId)
+  generateLabels(locationId: string): void {
+    this.storageLocationClient.getLabelsForStorageLocation(locationId)
       .subscribe(x => {
         saveAs(x.data, x.fileName)
       });
+  }
+
+  configureLocation(locationId: string): void {
+    this.router.navigate(['/locations', locationId]);
   }
 }
