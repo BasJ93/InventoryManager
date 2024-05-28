@@ -851,6 +851,7 @@ export class StandardClient implements IStandardClient {
 export interface IStorageLocationClient {
     getStorageLocations(): Observable<GetStorageLocationsResponseDto[]>;
     createStorageLocation(requestDto: CreateStorageLocationRequestDto): Observable<void>;
+    getStorageLocationTypes(): Observable<StorageLocationTypeDto[]>;
     getStorageLocation(id: string): Observable<GetStorageLocationResponseDto>;
     updateStorageLocation(id: string): Observable<FileResponse>;
     putContainerInStorageLocation(id: string, x: number, y: number, containerId: string): Observable<void>;
@@ -971,6 +972,61 @@ export class StorageLocationClient implements IStorageLocationClient {
             let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getStorageLocationTypes(): Observable<StorageLocationTypeDto[]> {
+        let url_ = this.baseUrl + "/api/StorageLocations/types";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStorageLocationTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStorageLocationTypes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StorageLocationTypeDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StorageLocationTypeDto[]>;
+        }));
+    }
+
+    protected processGetStorageLocationTypes(response: HttpResponseBase): Observable<StorageLocationTypeDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(StorageLocationTypeDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -1875,8 +1931,49 @@ export interface ICreateStandardRequestDto {
     alternativeNames: string[];
 }
 
+export class StorageLocationTypeDto implements IStorageLocationTypeDto {
+    index!: number;
+    type!: string;
+
+    constructor(data?: IStorageLocationTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.index = _data["index"] !== undefined ? _data["index"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): StorageLocationTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StorageLocationTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["index"] = this.index !== undefined ? this.index : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        return data;
+    }
+}
+
+export interface IStorageLocationTypeDto {
+    index: number;
+    type: string;
+}
+
 export class CreateStorageLocationRequestDto implements ICreateStorageLocationRequestDto {
     name!: string;
+    type!: StorageLocationType;
     sizeX!: number;
     sizeY!: number;
 
@@ -1892,6 +1989,7 @@ export class CreateStorageLocationRequestDto implements ICreateStorageLocationRe
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
             this.sizeX = _data["sizeX"] !== undefined ? _data["sizeX"] : <any>null;
             this.sizeY = _data["sizeY"] !== undefined ? _data["sizeY"] : <any>null;
         }
@@ -1907,6 +2005,7 @@ export class CreateStorageLocationRequestDto implements ICreateStorageLocationRe
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
         data["sizeX"] = this.sizeX !== undefined ? this.sizeX : <any>null;
         data["sizeY"] = this.sizeY !== undefined ? this.sizeY : <any>null;
         return data;
@@ -1915,8 +2014,14 @@ export class CreateStorageLocationRequestDto implements ICreateStorageLocationRe
 
 export interface ICreateStorageLocationRequestDto {
     name: string;
+    type: StorageLocationType;
     sizeX: number;
     sizeY: number;
+}
+
+export enum StorageLocationType {
+    Case = 0,
+    Drawer = 1,
 }
 
 export class GetStorageLocationResponseDto extends GetStorageLocationsResponseDto implements IGetStorageLocationResponseDto {
