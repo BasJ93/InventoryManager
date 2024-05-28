@@ -21,6 +21,13 @@ public class StorageLocationController : ControllerBase
     {
         return Ok(await _storageLocationService.GetStorageLocations(ctx));
     }
+
+    [HttpGet("types")]
+    [ProducesResponseType(typeof(List<StorageLocationTypeDto>), StatusCodes.Status200OK)]
+    public IActionResult GetStorageLocationTypes()
+    {
+        return Ok(_storageLocationService.GetStorageLocationTypes());
+    }
     
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]

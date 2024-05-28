@@ -1,0 +1,22 @@
+<form (ngSubmit)="createLocation()" [formGroup]="formGroup" class="create-location-form">
+  <mat-form-field class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="selectedType">
+      <mat-option value="{{content.index}}"
+                  *ngFor="let content of availableTypes">{{content.type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="half-width">
+    <mat-label>Width</mat-label>
+    <input matInput formControlName="sizeWidth" />
+  </mat-form-field>
+  <mat-form-field class="half-width">
+    <mat-label>Height</mat-label>
+    <input matInput formControlName="sizeHeight" />
+  </mat-form-field>
+  <button mat-button class="full-width" color="primary" type="submit">Add</button>
+</form>

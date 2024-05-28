@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,13 +29,8 @@ import {
   templateUrl: './create-content.component.html',
   styleUrl: './create-content.component.scss'
 })
-export class CreateContentComponent {
+export class CreateContentComponent implements OnInit {
   constructor(private contentClient: ContentClient, private standardsClient: StandardClient) {
-    this.contentClient.getContentTypes()
-      .subscribe(x => this.availableTypes = x);
-
-    this.standardsClient.getStandards()
-      .subscribe(x => this.availableStandards = x);
   }
 
   // property with the available content types
@@ -50,6 +45,14 @@ export class CreateContentComponent {
     size: new FormControl(''),
     length: new FormControl('')
   });
+
+  ngOnInit(): void {
+    this.contentClient.getContentTypes()
+      .subscribe(x => this.availableTypes = x);
+
+    this.standardsClient.getStandards()
+      .subscribe(x => this.availableStandards = x);
+  }
 
   createContent(): void {
     if(this.formGroup.valid) {

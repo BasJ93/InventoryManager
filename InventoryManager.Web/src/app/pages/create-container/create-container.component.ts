@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,12 +29,8 @@ import {
   templateUrl: './create-container.component.html',
   styleUrl: './create-container.component.scss'
 })
-export class CreateContainerComponent {
+export class CreateContainerComponent implements OnInit {
   constructor(private containerClient: ContainerClient, private contentClient: ContentClient) {
-    this.loadContents(true);
-
-    this.containerClient.getContainerSizes()
-      .subscribe(x => this.containerSizes = x);
   }
 
   withoutContainer: boolean = true;
@@ -46,6 +42,13 @@ export class CreateContainerComponent {
   selectedContent: string = '';
 
   selectedSize: number = 0;
+
+  ngOnInit(): void {
+    this.loadContents(true);
+
+    this.containerClient.getContainerSizes()
+      .subscribe(x => this.containerSizes = x);
+  }
 
   createContainer(): void {
     if (this.selectedContent === '') {
