@@ -15,6 +15,249 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
+export interface IConfigurationClient {
+    getLabelPrinterConfiguration(): Observable<LabelPrinterConfigurationDto>;
+    setLabelPrinterConfiguration(labelPrinterConfiguration: LabelPrinterConfigurationDto): Observable<LabelPrinterConfigurationDto>;
+    getQuickLabelPrinterConfiguration(): Observable<LabelPrinterEnabledDto>;
+    setQuickLabelPrinterConfiguration(dto: LabelPrinterEnabledDto): Observable<void>;
+}
+
+@Injectable()
+export class ConfigurationClient implements IConfigurationClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getLabelPrinterConfiguration(): Observable<LabelPrinterConfigurationDto> {
+        let url_ = this.baseUrl + "/api/Configurations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLabelPrinterConfiguration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLabelPrinterConfiguration(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelPrinterConfigurationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelPrinterConfigurationDto>;
+        }));
+    }
+
+    protected processGetLabelPrinterConfiguration(response: HttpResponseBase): Observable<LabelPrinterConfigurationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LabelPrinterConfigurationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    setLabelPrinterConfiguration(labelPrinterConfiguration: LabelPrinterConfigurationDto): Observable<LabelPrinterConfigurationDto> {
+        let url_ = this.baseUrl + "/api/Configurations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(labelPrinterConfiguration);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetLabelPrinterConfiguration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetLabelPrinterConfiguration(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelPrinterConfigurationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelPrinterConfigurationDto>;
+        }));
+    }
+
+    protected processSetLabelPrinterConfiguration(response: HttpResponseBase): Observable<LabelPrinterConfigurationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LabelPrinterConfigurationDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getQuickLabelPrinterConfiguration(): Observable<LabelPrinterEnabledDto> {
+        let url_ = this.baseUrl + "/api/Configurations/quick";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetQuickLabelPrinterConfiguration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetQuickLabelPrinterConfiguration(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelPrinterEnabledDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelPrinterEnabledDto>;
+        }));
+    }
+
+    protected processGetQuickLabelPrinterConfiguration(response: HttpResponseBase): Observable<LabelPrinterEnabledDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LabelPrinterEnabledDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    setQuickLabelPrinterConfiguration(dto: LabelPrinterEnabledDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/Configurations/quick";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetQuickLabelPrinterConfiguration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetQuickLabelPrinterConfiguration(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetQuickLabelPrinterConfiguration(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IContainerClient {
     getContainers(): Observable<ContainerOverviewResponseDto[]>;
     createContainer(requestDto: CreateContainerRequestDto): Observable<void>;
@@ -858,6 +1101,7 @@ export interface IStorageLocationClient {
     removeContainerFromStorageLocation(id: string, x: number, y: number): Observable<void>;
     getLidInsertForStorageLocation(id: string): Observable<FileResponse>;
     getLabelsForStorageLocation(id: string): Observable<FileResponse>;
+    printLabelsForStorageLocation(id: string): Observable<void>;
 }
 
 @Injectable()
@@ -1368,6 +1612,209 @@ export class StorageLocationClient implements IStorageLocationClient {
         }
         return _observableOf(null as any);
     }
+
+    printLabelsForStorageLocation(id: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/StorageLocations/{id}/labels/print";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPrintLabelsForStorageLocation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPrintLabelsForStorageLocation(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processPrintLabelsForStorageLocation(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+export class LabelPrinterEnabledDto implements ILabelPrinterEnabledDto {
+    labelPrinterEnabled!: boolean;
+
+    constructor(data?: ILabelPrinterEnabledDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.labelPrinterEnabled = _data["labelPrinterEnabled"] !== undefined ? _data["labelPrinterEnabled"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelPrinterEnabledDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelPrinterEnabledDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["labelPrinterEnabled"] = this.labelPrinterEnabled !== undefined ? this.labelPrinterEnabled : <any>null;
+        return data;
+    }
+}
+
+export interface ILabelPrinterEnabledDto {
+    labelPrinterEnabled: boolean;
+}
+
+export class LabelPrinterConfigurationDto extends LabelPrinterEnabledDto implements ILabelPrinterConfigurationDto {
+    networkLabelPrinter!: boolean;
+    labelPrinterAddress!: string | null;
+    hasCutter!: boolean;
+    usesDelayedCut!: boolean;
+    delayedCutterCommand!: string | null;
+
+    constructor(data?: ILabelPrinterConfigurationDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.networkLabelPrinter = _data["networkLabelPrinter"] !== undefined ? _data["networkLabelPrinter"] : <any>null;
+            this.labelPrinterAddress = _data["labelPrinterAddress"] !== undefined ? _data["labelPrinterAddress"] : <any>null;
+            this.hasCutter = _data["hasCutter"] !== undefined ? _data["hasCutter"] : <any>null;
+            this.usesDelayedCut = _data["usesDelayedCut"] !== undefined ? _data["usesDelayedCut"] : <any>null;
+            this.delayedCutterCommand = _data["delayedCutterCommand"] !== undefined ? _data["delayedCutterCommand"] : <any>null;
+        }
+    }
+
+    static override fromJS(data: any): LabelPrinterConfigurationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelPrinterConfigurationDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["networkLabelPrinter"] = this.networkLabelPrinter !== undefined ? this.networkLabelPrinter : <any>null;
+        data["labelPrinterAddress"] = this.labelPrinterAddress !== undefined ? this.labelPrinterAddress : <any>null;
+        data["hasCutter"] = this.hasCutter !== undefined ? this.hasCutter : <any>null;
+        data["usesDelayedCut"] = this.usesDelayedCut !== undefined ? this.usesDelayedCut : <any>null;
+        data["delayedCutterCommand"] = this.delayedCutterCommand !== undefined ? this.delayedCutterCommand : <any>null;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ILabelPrinterConfigurationDto extends ILabelPrinterEnabledDto {
+    networkLabelPrinter: boolean;
+    labelPrinterAddress: string | null;
+    hasCutter: boolean;
+    usesDelayedCut: boolean;
+    delayedCutterCommand: string | null;
+}
+
+export class ProblemDetails implements IProblemDetails {
+    type!: string | null;
+    title!: string | null;
+    status!: number | null;
+    detail!: string | null;
+    instance!: string | null;
+
+    [key: string]: any;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
+            this.detail = _data["detail"] !== undefined ? _data["detail"] : <any>null;
+            this.instance = _data["instance"] !== undefined ? _data["instance"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["status"] = this.status !== undefined ? this.status : <any>null;
+        data["detail"] = this.detail !== undefined ? this.detail : <any>null;
+        data["instance"] = this.instance !== undefined ? this.instance : <any>null;
+        return data;
+    }
+}
+
+export interface IProblemDetails {
+    type: string | null;
+    title: string | null;
+    status: number | null;
+    detail: string | null;
+    instance: string | null;
+
+    [key: string]: any;
 }
 
 export class ContainerResponseDto implements IContainerResponseDto {
@@ -1541,70 +1988,6 @@ export interface IContentResponseDto {
     standard: string;
     definition: string;
     description: string;
-}
-
-export class ProblemDetails implements IProblemDetails {
-    type!: string | null;
-    title!: string | null;
-    status!: number | null;
-    detail!: string | null;
-    instance!: string | null;
-
-    [key: string]: any;
-
-    constructor(data?: IProblemDetails) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            for (var property in _data) {
-                if (_data.hasOwnProperty(property))
-                    this[property] = _data[property];
-            }
-            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
-            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
-            this.status = _data["status"] !== undefined ? _data["status"] : <any>null;
-            this.detail = _data["detail"] !== undefined ? _data["detail"] : <any>null;
-            this.instance = _data["instance"] !== undefined ? _data["instance"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): ProblemDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProblemDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        for (var property in this) {
-            if (this.hasOwnProperty(property))
-                data[property] = this[property];
-        }
-        data["type"] = this.type !== undefined ? this.type : <any>null;
-        data["title"] = this.title !== undefined ? this.title : <any>null;
-        data["status"] = this.status !== undefined ? this.status : <any>null;
-        data["detail"] = this.detail !== undefined ? this.detail : <any>null;
-        data["instance"] = this.instance !== undefined ? this.instance : <any>null;
-        return data;
-    }
-}
-
-export interface IProblemDetails {
-    type: string | null;
-    title: string | null;
-    status: number | null;
-    detail: string | null;
-    instance: string | null;
-
-    [key: string]: any;
 }
 
 export class CreateContainerRequestDto implements ICreateContainerRequestDto {

@@ -72,6 +72,8 @@ public class ContainerController : ControllerBase
         return Ok(_containerService.GetContainerSizes());
     }
 
+    // TODO: Create an endpoint to send the labels to the label printer
+    
     [HttpPost("labels")]
     [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLabelsForContainers(CancellationToken ctx = default)

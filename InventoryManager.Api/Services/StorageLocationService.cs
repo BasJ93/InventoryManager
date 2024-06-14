@@ -2,6 +2,7 @@ using InventoryManager.Api.Mappers;
 using InventoryManager.Database;
 using InventoryManager.Domain;
 using InventoryManager.Domain.Enums;
+using InventoryManager.LabelPrinter;
 using InventoryManager.Models;
 using InventoryManager.Reports;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +14,15 @@ public class StorageLocationService : IStorageLocationService
     private readonly ILogger<StorageLocationService> _logger;
     private readonly InventoryManagerContext _db;
     private readonly IReportGenerator _reportGenerator;
+    private readonly IPrintLabel _printLabel;
 
     public StorageLocationService(ILogger<StorageLocationService> logger, InventoryManagerContext db,
-        IReportGenerator reportGenerator)
+        IReportGenerator reportGenerator, IPrintLabel printLabel)
     {
         _logger = logger;
         _db = db;
         _reportGenerator = reportGenerator;
+        _printLabel = printLabel;
     }
 
     public async Task<List<GetStorageLocationsResponseDto>> GetStorageLocations(CancellationToken ctx = default)
@@ -141,44 +144,44 @@ public class StorageLocationService : IStorageLocationService
 
     public async Task<(MemoryStream?, string?)> GenerateLabelsPdf(Guid id, CancellationToken ctx = default)
     {
-        StorageLocation? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+        StorageLocation? storageLocation = await _db.StorageCases.Where(x => x.Id == id)
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
             .ThenInclude(c => c.Standard)
             .FirstOrDefaultAsync(ctx);
 
-        if (storageCase == default)
+        if (storageLocation == default)
         {
             return (null, null);
         }
 
-        MemoryStream labelsSheet = _reportGenerator.GenerateContainerLabelsSheet(storageCase);
+        MemoryStream labelsSheet = _reportGenerator.GenerateContainerLabelsSheet(storageLocation);
 
         labelsSheet.Position = 0;
 
-        return (labelsSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageCase.Name}-labels.pdf");
+        return (labelsSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageLocation.Name}-labels.pdf");
     }
 
     public async Task<(MemoryStream?, string?)> GenerateLidPdf(Guid id, CancellationToken ctx = default)
     {
-        StorageLocation? storageCase = await _db.StorageCases.Where(x => x.Id == id)
+        StorageLocation? storageLocation = await _db.StorageCases.Where(x => x.Id == id)
             .Include(x => x.Containers)
             .ThenInclude(y => y.Container)
             .ThenInclude(z => z.Content)
             .ThenInclude(c => c.Standard)
             .FirstOrDefaultAsync(ctx);
 
-        if (storageCase == default)
+        if (storageLocation == default)
         {
             return (null, null);
         }
 
-        MemoryStream lidSheet = _reportGenerator.GenerateCaseLidSheet(storageCase);
+        MemoryStream lidSheet = _reportGenerator.GenerateCaseLidSheet(storageLocation);
 
         lidSheet.Position = 0;
 
-        return (lidSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageCase.Name}-lid.pdf");
+        return (lidSheet, $"{DateTime.Now:yyyy-MM-dd}-{storageLocation.Name}-lid.pdf");
     }
 
     public async Task<string> GetStorageLocationName(Guid id, CancellationToken ctx = default)
@@ -186,6 +189,34 @@ public class StorageLocationService : IStorageLocationService
         string? name = await _db.StorageCases.Where(x => x.Id == id).Select(x => x.Name).FirstOrDefaultAsync(ctx);
 
         return name ?? string.Empty;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> PrintLabelsOnLabelPrinter(Guid id, CancellationToken ctx = default)
+    {
+        StorageLocation? storageLocation = await _db.StorageCases.Where(x => x.Id == id)
+            .Include(x => x.Containers)
+            .ThenInclude(y => y.Container)
+            .ThenInclude(z => z.Content)
+            .ThenInclude(c => c.Standard)
+            .FirstOrDefaultAsync(ctx);
+
+        if (storageLocation == default)
+        {
+            return false;
+        }
+
+        ICollection<Container> containers = storageLocation.Containers.Select(x => x.Container).ToList();
+
+        LabelDefinition? labelDefinition = await _db.LabelDefinitions.FirstOrDefaultAsync(x => x.Type == LabelType.Container, ctx);
+
+        if (labelDefinition == null)
+        {
+            _logger.LogWarning("No label definition found for the container label");
+            return false;
+        }
+
+        return _printLabel.Print(labelDefinition, containers);
     }
 
     public async Task<Guid> CreateStorageLocation(CreateStorageLocationRequestDto requestDto,

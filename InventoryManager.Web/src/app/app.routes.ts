@@ -14,6 +14,7 @@ import {
 import { CreateContainerComponent } from "./pages/create-container/create-container.component";
 import { CreateContentComponent } from "./pages/create-content/create-content.component";
 import { CreateStorageLocationComponent } from "./pages/create-storage-location/create-storage-location.component";
+import { LabelPrinterSettingsComponent } from "./label-printer-settings/label-printer-settings.component";
 
 export const routes: Routes = [
   {path: 'contents', component: ContentsOverviewComponent},
@@ -22,5 +23,6 @@ export const routes: Routes = [
   {path: 'containers/new', component: CreateContainerComponent},
   {path: 'locations', component: StorageLocationsOverviewComponent},
   {path: 'locations/new', component: CreateStorageLocationComponent},
-  {path: 'locations/:id', component: StorageLocationContentBuilderComponent}
+  {path: 'locations/:id', component: StorageLocationContentBuilderComponent},
+  {path: 'config/printer/label', component: LabelPrinterSettingsComponent}
 ];

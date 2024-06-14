@@ -1,3 +1,4 @@
+using InventoryManager.Domain;
 using InventoryManager.Models;
 
 namespace InventoryManager.Api.Services;
@@ -21,4 +22,11 @@ public interface IStorageLocationService
     Task<(MemoryStream?, string?)> GenerateLidPdf(Guid id, CancellationToken ctx = default);
 
     Task<string> GetStorageLocationName(Guid id, CancellationToken ctx = default);
+
+    /// <summary>
+    /// Print the labels for the <see cref="Container"/>s in the <see cref="StorageLocation"/> on a label printer.
+    /// </summary>
+    /// <param name="id">Id of the <see cref="StorageLocation"/>.</param>
+    /// <param name="ctx">Cancellation token.</param>
+    Task<bool> PrintLabelsOnLabelPrinter(Guid id, CancellationToken ctx = default);
 }

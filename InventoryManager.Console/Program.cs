@@ -1,6 +1,9 @@
 ﻿using InventoryManager.Domain;
+using InventoryManager.Domain.Configuration;
 using InventoryManager.Domain.Enums;
+using InventoryManager.LabelPrinter;
 using InventoryManager.Reports;
+using Microsoft.Extensions.Options;
 
 Console.WriteLine("Hello, World!");
 
@@ -183,7 +186,7 @@ position6.Container = container6;
 storageLocation.Containers.Add(position6);
 
 
-ReportGenerator reportGenerator = new();
+/*ReportGenerator reportGenerator = new();
 
 using (MemoryStream caseLidSheet = reportGenerator.GenerateCaseLidSheet(storageLocation))
 {
@@ -199,4 +202,24 @@ using (MemoryStream labelsSheet = reportGenerator.GenerateContainerLabelsSheet(s
   
   using FileStream labelsPdf = new FileStream("labelsheet.pdf", FileMode.Create);
   labelsSheet.CopyTo(labelsPdf);
-}
+}*/
+
+LabelPrinterConfiguration labelPrinterConfiguration = new()
+{
+  LabelPrinterEnabled = true,
+  NetworkLabelPrinter = false,
+  HasCutter = true,
+  UsesDelayedCut = false,
+  LabelPrinterAddress = Path.DirectorySeparatorChar + Path.Combine("dev", "usb", "lp3"),
+};
+
+IOptions<LabelPrinterConfiguration> options = Options.Create(new LabelPrinterConfiguration());
+
+PrintLabel printLabel = new(options);
+
+LabelDefinition containerLabel = new()
+{
+  CommandText = "^XA^FX Set print mode to cut^MMC,N^FO32,4^FB160,1,0,C,0^AAN,18,10^FD%Standard%^FS^FO32,30^FB160,1,0,C,0^ADN,36,20^FD%Content%^FS^XZ",
+};
+
+printLabel.Print(containerLabel, container1);

@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\InventoryManager.Database\InventoryManager.Database.csproj" />
+      <ProjectReference Include="..\InventoryManager.LabelPrinter\InventoryManager.LabelPrinter.csproj" />
       <ProjectReference Include="..\InventoryManager.Models\InventoryManager.Models.csproj" />
       <ProjectReference Include="..\InventoryManager.Reports\InventoryManager.Reports.csproj" />
     </ItemGroup>

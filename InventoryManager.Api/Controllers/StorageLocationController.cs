@@ -100,7 +100,7 @@ public class StorageLocationController : ControllerBase
 
         return fileStreamResult;
     }
-    
+
     [HttpGet("{id:guid}/labels")]
     [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLabelsForStorageLocation([FromRoute] Guid id, CancellationToken ctx = default)
@@ -118,5 +118,20 @@ public class StorageLocationController : ControllerBase
         };
 
         return fileStreamResult;
+    }
+    
+    [HttpPost("{id:guid}/labels/print")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> PrintLabelsForStorageLocation([FromRoute] Guid id, CancellationToken ctx = default)
+    {
+        bool printed = await _storageLocationService.PrintLabelsOnLabelPrinter(id, ctx);
+
+        if (printed)
+        {
+            return Ok();
+        }
+
+        return NotFound();
     }
 }

@@ -10,6 +10,7 @@ import {
   GetStorageLocationsResponseDto,
   StorageLocationClient
 } from "../../generated/api.generated.clients";
+import { QuickSettingsService } from "../../services/quick-settings/quick-settings.service";
 
 @Component({
   selector: 'app-storagecases-overview',
@@ -27,7 +28,7 @@ import {
   styleUrl: './storage-locations-overview.component.scss'
 })
 export class StorageLocationsOverviewComponent implements OnInit {
-  constructor(private storageLocationClient: StorageLocationClient, private router: Router) {
+  constructor(private storageLocationClient: StorageLocationClient, private router: Router, private quickSettingsService: QuickSettingsService) {
   }
 
   storageLocations: MatTableDataSource<GetStorageLocationsResponseDto> = new MatTableDataSource<GetStorageLocationsResponseDto>();
@@ -36,9 +37,13 @@ export class StorageLocationsOverviewComponent implements OnInit {
 
   tableColumns: string[] = this.automaticTableColumns.concat(['actions']);
 
+  labelPrinterEnabled: boolean = false;
+
   ngOnInit(): void {
     this.storageLocationClient.getStorageLocations()
       .subscribe(x => this.storageLocations.data = x);
+
+    this.quickSettingsService.getLabelPrinterEnabledAsObservable().subscribe(x => this.labelPrinterEnabled = x);
   }
 
   generateLid(locationId: string): void {
@@ -49,10 +54,15 @@ export class StorageLocationsOverviewComponent implements OnInit {
   }
 
   generateLabels(locationId: string): void {
-    this.storageLocationClient.getLabelsForStorageLocation(locationId)
-      .subscribe(x => {
-        saveAs(x.data, x.fileName)
-      });
+    if (this.labelPrinterEnabled) {
+      this.storageLocationClient.printLabelsForStorageLocation(locationId)
+        .subscribe(x => console.log(x));
+    } else {
+      this.storageLocationClient.getLabelsForStorageLocation(locationId)
+        .subscribe(x => {
+          saveAs(x.data, x.fileName)
+        });
+    }
   }
 
   configureLocation(locationId: string): void {

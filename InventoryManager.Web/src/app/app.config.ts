@@ -9,7 +9,7 @@ import {
   ContainerClient,
   StorageLocationClient,
   ContentClient,
-  StandardClient
+  StandardClient, ConfigurationClient
 } from "./generated/api.generated.clients";
 import { environment } from "../environments/environment";
 
@@ -22,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ContainerClient },
     { provide: StorageLocationClient },
     { provide: ContentClient },
-    { provide: StandardClient}
+    { provide: StandardClient},
+    { provide: ConfigurationClient}
   ]
 };
