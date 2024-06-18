@@ -7,8 +7,8 @@ import { MatButton } from '@angular/material/button';
 import {
   ConfigurationClient,
   LabelPrinterConfigurationDto
-} from "../generated/api.generated.clients";
-import { QuickSettingsService } from "../services/quick-settings/quick-settings.service";
+} from "../../../generated/api.generated.clients";
+import { QuickSettingsService } from "../../../services/quick-settings/quick-settings.service";
 
 @Component({
   selector: 'app-label-printer-settings',
