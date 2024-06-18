@@ -19,6 +19,7 @@ builder.Services.AddScoped<IStorageLocationService, StorageLocationService>();
 builder.Services.AddScoped<IContainerService, ContainerService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IStandardsService, StandardsService>();
+builder.Services.AddScoped<ILabelDefinitionService, LabelDefinitionService>();
 
 builder.Services.AddScoped<ILabelPrinterConfigurationService, LabelPrinterConfigurationService>();
 

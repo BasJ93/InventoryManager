@@ -1,5 +1,6 @@
 using InventoryManager.Api.Mappers;
 using InventoryManager.Database;
+using InventoryManager.Domain;
 using InventoryManager.Domain.Enums;
 using InventoryManager.Models;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,27 @@ public class LabelDefinitionService : ILabelDefinitionService
     /// <inheritdoc />
     public async Task<LabelDefinitionDto?> GetLabelDefinition(Guid id, CancellationToken ctx = default)
     {
-        return await _db.LabelDefinitions.ProjectToDto().FirstOrDefaultAsync(x => x.Id == id, ctx);
+        return await _db.LabelDefinitions.ProjectToDto().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ctx);
+    }
+
+    public async Task<LabelDefinitionDto?> SetLabelDefinition(Guid id, LabelDefinitionDto definition, CancellationToken ctx = default)
+    {
+        LabelDefinition? labelDefinition = await _db.LabelDefinitions.FirstOrDefaultAsync(x => x.Id == id, ctx);
+
+        if (labelDefinition == default)
+        {
+            return null;
+        }
+
+        labelDefinition.Name = definition.Name;
+        labelDefinition.Type = (LabelType)definition.Type;
+        labelDefinition.CommandText = definition.CommandText;
+
+        if (await _db.SaveChangesAsync(ctx) > 0)
+        {
+            return labelDefinition.ToDto();
+        }
+
+        return null;
     }
 }

@@ -964,6 +964,199 @@ export class ContentClient implements IContentClient {
     }
 }
 
+export interface ILabelDefinitionClient {
+    getStorageLocationTypes(): Observable<LabelTypeDto[]>;
+    getLabelDefinition(id: string): Observable<LabelDefinitionDto>;
+    updateLabelDefinition(id: string, dto: LabelDefinitionDto): Observable<LabelDefinitionDto>;
+}
+
+@Injectable()
+export class LabelDefinitionClient implements ILabelDefinitionClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getStorageLocationTypes(): Observable<LabelTypeDto[]> {
+        let url_ = this.baseUrl + "/api/LabelDefinitions/types";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStorageLocationTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStorageLocationTypes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelTypeDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelTypeDto[]>;
+        }));
+    }
+
+    protected processGetStorageLocationTypes(response: HttpResponseBase): Observable<LabelTypeDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LabelTypeDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getLabelDefinition(id: string): Observable<LabelDefinitionDto> {
+        let url_ = this.baseUrl + "/api/LabelDefinitions/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLabelDefinition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLabelDefinition(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelDefinitionDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelDefinitionDto>;
+        }));
+    }
+
+    protected processGetLabelDefinition(response: HttpResponseBase): Observable<LabelDefinitionDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LabelDefinitionDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateLabelDefinition(id: string, dto: LabelDefinitionDto): Observable<LabelDefinitionDto> {
+        let url_ = this.baseUrl + "/api/LabelDefinitions/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLabelDefinition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLabelDefinition(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelDefinitionDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelDefinitionDto>;
+        }));
+    }
+
+    protected processUpdateLabelDefinition(response: HttpResponseBase): Observable<LabelDefinitionDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LabelDefinitionDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IStandardClient {
     getStandards(): Observable<StandardResponseDto[]>;
     createStandard(requestDto: CreateStandardRequestDto): Observable<void>;
@@ -2213,6 +2406,94 @@ export class ContentTypeDto implements IContentTypeDto {
 export interface IContentTypeDto {
     index: number;
     type: string;
+}
+
+export class LabelTypeDto implements ILabelTypeDto {
+    index!: number;
+    type!: string;
+
+    constructor(data?: ILabelTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.index = _data["index"] !== undefined ? _data["index"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["index"] = this.index !== undefined ? this.index : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        return data;
+    }
+}
+
+export interface ILabelTypeDto {
+    index: number;
+    type: string;
+}
+
+export class LabelDefinitionDto implements ILabelDefinitionDto {
+    id!: string;
+    name!: string;
+    commandText!: string;
+    type!: number;
+
+    constructor(data?: ILabelDefinitionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.commandText = _data["commandText"] !== undefined ? _data["commandText"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelDefinitionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelDefinitionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["commandText"] = this.commandText !== undefined ? this.commandText : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        return data;
+    }
+}
+
+export interface ILabelDefinitionDto {
+    id: string;
+    name: string;
+    commandText: string;
+    type: number;
 }
 
 export class StandardResponseDto implements IStandardResponseDto {

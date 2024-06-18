@@ -9,7 +9,7 @@ import {
   ContainerClient,
   StorageLocationClient,
   ContentClient,
-  StandardClient, ConfigurationClient
+  StandardClient, ConfigurationClient, LabelDefinitionClient
 } from "./generated/api.generated.clients";
 import { environment } from "../environments/environment";
 
@@ -18,11 +18,12 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync('noop'),
     provideHttpClient(),
-    { provide: API_BASE_URL, useValue: environment.basePath },
-    { provide: ContainerClient },
-    { provide: StorageLocationClient },
-    { provide: ContentClient },
-    { provide: StandardClient},
-    { provide: ConfigurationClient}
+    {provide: API_BASE_URL, useValue: environment.basePath},
+    {provide: ContainerClient},
+    {provide: StorageLocationClient},
+    {provide: ContentClient},
+    {provide: StandardClient},
+    {provide: ConfigurationClient},
+    {provide: LabelDefinitionClient}
   ]
 };

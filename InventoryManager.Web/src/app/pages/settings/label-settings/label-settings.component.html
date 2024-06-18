@@ -1,0 +1,18 @@
+<form (ngSubmit)="saveLabel()" [formGroup]="formGroup" class="edit-label-form">
+  <mat-form-field class="full-width">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="labelType" [compareWith]="labelTypeCompareFunction">
+      <mat-option value="{{content.index}}"
+                  *ngFor="let content of availableTypes">{{content.type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <mat-label>Command text</mat-label>
+    <textarea matInput formControlName="commandText" ></textarea>
+  </mat-form-field>
+  <button mat-button class="full-width" color="primary" type="submit">Save</button>
+</form>
