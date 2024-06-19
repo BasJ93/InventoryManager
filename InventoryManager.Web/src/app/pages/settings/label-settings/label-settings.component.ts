@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
 import {
   ContentTypeDto,
   LabelDefinitionClient, LabelDefinitionDto,
-  LabelPrinterConfigurationDto
+  LabelPrinterConfigurationDto, LabelTypeDto
 } from "../../../generated/api.generated.clients";
 
 @Component({
@@ -35,7 +35,7 @@ export class LabelSettingsComponent implements OnInit {
 
   private labelDefinitionId: string = "";
 
-  availableTypes: ContentTypeDto[] = [];
+  availableTypes: LabelTypeDto[] = [];
 
   /*
    * public string Name { get; set; } = string.Empty;
@@ -55,7 +55,7 @@ export class LabelSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.labelClient.getStorageLocationTypes()
+    this.labelClient.getLabelTypes()
       .subscribe(x => {
         this.availableTypes = x;
 

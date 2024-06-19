@@ -35,6 +35,12 @@ public class LabelDefinitionService : ILabelDefinitionService
     }
 
     /// <inheritdoc />
+    public async Task<ICollection<LabelDefinitionDto>> GetLabelDefinitions(CancellationToken ctx = default)
+    {
+        return await _db.LabelDefinitions.ProjectToDto().AsNoTracking().ToListAsync(ctx);
+    }
+
+    /// <inheritdoc />
     public async Task<LabelDefinitionDto?> GetLabelDefinition(Guid id, CancellationToken ctx = default)
     {
         return await _db.LabelDefinitions.ProjectToDto().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ctx);

@@ -965,7 +965,8 @@ export class ContentClient implements IContentClient {
 }
 
 export interface ILabelDefinitionClient {
-    getStorageLocationTypes(): Observable<LabelTypeDto[]>;
+    getLabelDefinitions(): Observable<LabelDefinitionDto[]>;
+    getLabelTypes(): Observable<LabelTypeDto[]>;
     getLabelDefinition(id: string): Observable<LabelDefinitionDto>;
     updateLabelDefinition(id: string, dto: LabelDefinitionDto): Observable<LabelDefinitionDto>;
 }
@@ -981,7 +982,62 @@ export class LabelDefinitionClient implements ILabelDefinitionClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getStorageLocationTypes(): Observable<LabelTypeDto[]> {
+    getLabelDefinitions(): Observable<LabelDefinitionDto[]> {
+        let url_ = this.baseUrl + "/api/LabelDefinitions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLabelDefinitions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLabelDefinitions(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LabelDefinitionDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LabelDefinitionDto[]>;
+        }));
+    }
+
+    protected processGetLabelDefinitions(response: HttpResponseBase): Observable<LabelDefinitionDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LabelDefinitionDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getLabelTypes(): Observable<LabelTypeDto[]> {
         let url_ = this.baseUrl + "/api/LabelDefinitions/types";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -994,11 +1050,11 @@ export class LabelDefinitionClient implements ILabelDefinitionClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetStorageLocationTypes(response_);
+            return this.processGetLabelTypes(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetStorageLocationTypes(response_ as any);
+                    return this.processGetLabelTypes(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<LabelTypeDto[]>;
                 }
@@ -1007,7 +1063,7 @@ export class LabelDefinitionClient implements ILabelDefinitionClient {
         }));
     }
 
-    protected processGetStorageLocationTypes(response: HttpResponseBase): Observable<LabelTypeDto[]> {
+    protected processGetLabelTypes(response: HttpResponseBase): Observable<LabelTypeDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2408,46 +2464,6 @@ export interface IContentTypeDto {
     type: string;
 }
 
-export class LabelTypeDto implements ILabelTypeDto {
-    index!: number;
-    type!: string;
-
-    constructor(data?: ILabelTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.index = _data["index"] !== undefined ? _data["index"] : <any>null;
-            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): LabelTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LabelTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["index"] = this.index !== undefined ? this.index : <any>null;
-        data["type"] = this.type !== undefined ? this.type : <any>null;
-        return data;
-    }
-}
-
-export interface ILabelTypeDto {
-    index: number;
-    type: string;
-}
-
 export class LabelDefinitionDto implements ILabelDefinitionDto {
     id!: string;
     name!: string;
@@ -2494,6 +2510,46 @@ export interface ILabelDefinitionDto {
     name: string;
     commandText: string;
     type: number;
+}
+
+export class LabelTypeDto implements ILabelTypeDto {
+    index!: number;
+    type!: string;
+
+    constructor(data?: ILabelTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.index = _data["index"] !== undefined ? _data["index"] : <any>null;
+            this.type = _data["type"] !== undefined ? _data["type"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["index"] = this.index !== undefined ? this.index : <any>null;
+        data["type"] = this.type !== undefined ? this.type : <any>null;
+        return data;
+    }
+}
+
+export interface ILabelTypeDto {
+    index: number;
+    type: string;
 }
 
 export class StandardResponseDto implements IStandardResponseDto {

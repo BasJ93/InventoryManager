@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.Api.Controllers;
 
+/// <summary>
+/// Controller to interact with the label definitions.
+/// </summary>
 [ApiController]
 [Route("api/[controller]s")]
 public class LabelDefinitionController : ControllerBase
@@ -17,11 +20,21 @@ public class LabelDefinitionController : ControllerBase
     }
 
     /// <summary>
+    /// Get a list of defined label.
+    /// </summary>
+    [HttpGet()]
+    [ProducesResponseType(typeof(List<LabelDefinitionDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLabelDefinitions(CancellationToken ctx = default)
+    {
+        return Ok(await _labelDefinitionService.GetLabelDefinitions(ctx));
+    }
+    
+    /// <summary>
     /// Get a list of available label types.
     /// </summary>
     [HttpGet("types")]
     [ProducesResponseType(typeof(List<LabelTypeDto>), StatusCodes.Status200OK)]
-    public IActionResult GetStorageLocationTypes()
+    public IActionResult GetLabelTypes()
     {
         return Ok(_labelDefinitionService.GetLabelTypes());
     }
@@ -61,6 +74,4 @@ public class LabelDefinitionController : ControllerBase
 
         return Ok(labelDefinitionDto);
     }
-    
-    // TODO: Endpoint to get all label definitions for the label printer
 }
